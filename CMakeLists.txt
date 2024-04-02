@@ -3,9 +3,29 @@ cmake_minimum_required (VERSION 3.24 FATAL_ERROR)
 set(PROJECT Dark3DEngine)
 project(${PROJECT})
 
+set(RENDER_SOURCE 
+    src/Render/ShaderProgram.cpp
+    src/Render/VertexBuffer.cpp
+    src/Render/VertexArray.cpp
+	src/Render/Texture2D.cpp
+)
+
+set(RENDER_HEADERS 
+    src/Render/ShaderProgram.h
+    src/Render/VertexBuffer.h
+    src/Render/VertexArray.h
+	src/Render/Texture2D.h
+	src/Render/stb_image.h
+)
+
 add_executable(${PROJECT} 
 	src/main.cpp
+	${RENDER_SOURCE}
+	${RENDER_HEADERS}
 )
+
+source_group("Source Files\\Render" FILES ${RENDER_SOURCE})
+source_group("Header Files\\Render" FILES ${RENDER_HEADERS})
 
 target_compile_features(${PROJECT} PUBLIC cxx_std_17)
 
