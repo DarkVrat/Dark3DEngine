@@ -8,6 +8,7 @@ set(RENDER_SOURCE
     src/Render/VertexBuffer.cpp
     src/Render/VertexArray.cpp
 	src/Render/Texture2D.cpp
+	src/Render/Camera.cpp
 )
 
 set(RENDER_HEADERS 
@@ -15,6 +16,7 @@ set(RENDER_HEADERS
     src/Render/VertexBuffer.h
     src/Render/VertexArray.h
 	src/Render/Texture2D.h
+	src/Render/Camera.h
 	src/Render/stb_image.h
 )
 
