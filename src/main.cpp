@@ -1,6 +1,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <memory>
 
 #include "Render/VertexArray.h"
 #include "Render/ShaderProgram.h"
@@ -89,55 +90,57 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     float vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
-    ShaderProgram Shader("res/Shaders/VertexShader.glsl", "res/Shaders/FragmentShader.glsl");
-    Shader.use();
-    Shader.setInt("texture1", 0);
-    Shader.setInt("texture2", 1);
+    std::shared_ptr<ShaderProgram> Shader = std::make_shared<ShaderProgram>("res/Shaders/VertexShader.glsl", "res/Shaders/FragmentShader.glsl");
+    std::shared_ptr<ShaderProgram> lightShader = std::make_shared<ShaderProgram>("res/Shaders/VertexShader.glsl", "res/Shaders/LightFragmentShader.glsl");
+    Shader->use();
+    Shader->setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    Shader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    Camera::setShader(&Shader);
+    Camera::addShader(Shader);
+    Camera::addShader(lightShader);
     Camera::setScreenSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
     Camera::updatePositionMouse(glm::vec2(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
 
@@ -145,31 +148,38 @@ int main()
     VBO.initStatic(vertices, sizeof(vertices));
     
     VertexArray VAO;
-    VAO.addBuffer(VBO, 0, 3, 2);
-    VAO.addBuffer(VBO, 1, 2, 3, GL_FLOAT, (void*)(sizeof(float) * 3));
+    VAO.addBuffer(VBO, 0, 3, 3);
+    VAO.addBuffer(VBO, 1, 3, 3, GL_FLOAT, (void*)(3 * sizeof(float)));
 
-    Texture2D texture1("res/Textures/container.png");
-    texture1.setActiveId(0);
-    Texture2D texture2("res/Textures/awesomeface.png");
-    texture2.setActiveId(1);
-
-    texture1.bind();
-    texture2.bind();
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    VertexArray lightVAO;
+    lightVAO.addBuffer(VBO, 0, 3, 3); 
+    lightVAO.addBuffer(VBO, 1, 3, 3, GL_FLOAT, (void*)(3 * sizeof(float)));
 
     glm::vec3 cubePositions[] = {
     glm::vec3(0.0f,  0.0f,  0.0f),
-    glm::vec3(-2.0f,  -2.0f,  -2.0f),
-    glm::vec3(-2.0f,  -2.0f,  2.0f),
-    glm::vec3(-2.0f,  2.0f,  -2.0f),
-    glm::vec3(-2.0f,  2.0f,  2.0f),
     glm::vec3(2.0f,  -2.0f,  -2.0f),
     glm::vec3(2.0f,  -2.0f,  2.0f),
     glm::vec3(2.0f,  2.0f,  -2.0f),
-    glm::vec3(2.0f,  2.0f,  2.0f),
+    glm::vec3(2.0f,  2.0f,  2.0f)
     };
+
+    glm::vec3 lightPos(2.f, 1.5f, 1.f);
+
+    glm::mat4 lightModel = glm::mat4(1.0f);
+    lightModel = glm::translate(lightModel, lightPos);
+    lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+
+    lightShader->use();
+    lightShader->setMatrix4("model", lightModel);
+    Shader->use(); 
+    Shader->setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+    Shader->setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+    Shader->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    Shader->setFloat("material.shininess", 32.0f);
+    Shader->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    Shader->setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); 
+    Shader->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    Shader->setVec3("light.position", lightPos);
 
     float lastFrame = 0.0f;
 
@@ -181,22 +191,35 @@ int main()
         
         processInput(window);
 
-        glClearColor(0.1f, 0.2f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        Shader.use();
-        Camera::updatePositionCamera(deltaTime);
-        Shader.setMatrix4("model", model);
+        glClearColor(0.f, 0.f, 0.f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
+        Camera::updatePositionCamera(deltaTime);
+         
+        lightShader->use();
+        lightVAO.bind();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        Shader->use();
         VAO.bind();
         
-        for (unsigned int i = 0; i < 9; i++)
+        glm::vec3 lightColor;
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+        Shader->setVec3("light.ambient", ambientColor);
+        Shader->setVec3("light.diffuse", diffuseColor);
+
+        for (unsigned int i = 0; i < 5; i++)
         {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * (i+1);
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            Shader.setMatrix4("model", model);
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(20.0f * (i % 5)), glm::vec3(1.0f, 0.3f, 0.5f));
+            Shader->setMatrix4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }

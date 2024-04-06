@@ -9,7 +9,7 @@ glm::vec3 Render::Camera::cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float Render::Camera::fov = 70.f;
 float Render::Camera::yaw = -90.f;
 float Render::Camera::pitch = 0.f;
-Render::ShaderProgram* Render::Camera::shader = nullptr;
+std::vector<std::shared_ptr<Render::ShaderProgram>> Render::Camera::shaders;
 
 namespace Render
 {
@@ -24,9 +24,9 @@ namespace Render
 		direction = dir;
 	}
 
-	void Camera::setShader(ShaderProgram* shaderPtr)
+	void Camera::addShader(std::shared_ptr<ShaderProgram> ptr)
 	{
-		shader = shaderPtr;
+		shaders.push_back(ptr);
 	}
 
 	void Camera::updateFov(float deltaFov)
@@ -79,15 +79,22 @@ namespace Render
 
 	void Camera::updateProjection()
 	{
-		glm::mat4 projection = glm::perspective(glm::radians(fov), screenSize.x / screenSize.y, 0.1f, 100.0f);
-		shader->use();
-		shader->setMatrix4("projection", projection);
+		glm::mat4 projection = glm::perspective(glm::radians(fov), screenSize.x / screenSize.y, 0.01f, 100.0f);
+		for (auto shader : shaders)
+		{
+			shader->use();
+			shader->setMatrix4("projection", projection);
+		}
 	}
 
 	void Camera::updateView()
 	{
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		shader->use();
-		shader->setMatrix4("view", view);
+		for (auto shader : shaders)
+		{
+			shader->use();
+			shader->setMatrix4("view", view);
+			shader->setVec3("viewPos", cameraPos);
+		}
 	}
 }
