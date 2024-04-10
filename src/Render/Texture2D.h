@@ -20,12 +20,11 @@ namespace Render
 
 		void bind() const noexcept;
 
+	private:
 		GLuint m_id;
 		GLuint m_activeId = 0;
 		int m_width;
 		int m_height;
 		int m_channels;
-	private:
-		
 	};
 }

@@ -19,6 +19,10 @@ namespace Render
 		static void updatePositionMouse(const glm::vec2 pos);
 		static void updatePositionCamera(float delta);
 		static void updateFov(float deltaFov);
+
+		static glm::vec3 getPosition() { return cameraPos; }
+		static glm::vec3 getFront() { return cameraFront; }
+		static glm::vec3 getUp() { return cameraUp; }
 	private:
 		static void updateProjection();
 		static void updateView();
