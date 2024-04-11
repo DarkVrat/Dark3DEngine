@@ -85,7 +85,9 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetScrollCallback(window, scroll_callback);
     glfwSwapInterval(0);
-    glfwWindowHint(GLFW_SAMPLES, 4);
+   
+    glEnable(GL_MULTISAMPLE);
+    glfwWindowHint(GLFW_SAMPLES, 8); 
 
     glClearColor(0.f, 0.f, 0.f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -184,18 +186,18 @@ int main()
     lightVAO.addBuffer(VBO, 2, 2, 6, GL_FLOAT, (void*)(6 * sizeof(float)));
 
     Texture2D texture1("res/Textures/container2.png");
-    texture1.setActiveId(0);
-    texture1.bind();
     Texture2D texture2("res/Textures/container2_specular.png");
-    texture1.setActiveId(1);
+    texture1.setActiveId(0);
+    texture2.setActiveId(1);
     texture1.bind();
+    texture2.bind();
 
     Shader->use(); 
     Shader->setInt("material.diffuse", 0);
     Shader->setInt("material.specular", 1);
     Shader->setFloat("material.shininess", 32.0f);
 
-    Shader->setVec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+    Shader->setVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
     Shader->setVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
     Shader->setVec3("dirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
     Shader->setVec3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
@@ -232,7 +234,7 @@ int main()
     Shader->setFloat("pointLights[3].linear", 0.09f);
     Shader->setFloat("pointLights[3].quadratic", 0.032f);
     
-    Shader->setVec3("flashLight.ambient", glm::vec3(1.0f, 1.0f, 1.0f));
+    Shader->setVec3("flashLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
     Shader->setVec3("flashLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
     Shader->setVec3("flashLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
     Shader->setFloat("flashLight.constant", 1.0f);
@@ -265,7 +267,7 @@ int main()
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, glm::radians(angle) * static_cast<float>(glfwGetTime()) , glm::vec3(1.0f, 0.3f, 0.5f));
             Shader->setMatrix4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -282,8 +284,6 @@ int main()
             lightShader->setVec3("colorLight", pointLightColor[i]);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-
-        
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -67,7 +67,7 @@ void main()
 
     result += CalcFlashLight(flashLight, norm, FragPos, viewDir);    
     
-    FragColor = vec4(result, 1.0);
+    gl_FragColor = vec4(result, 1.0);
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)

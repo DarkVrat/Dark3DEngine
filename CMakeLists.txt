@@ -53,10 +53,13 @@ add_subdirectory(external/openal-soft)
 include_directories(external/openal-soft/include)
 target_link_libraries(${PROJECT} OpenAL)
 
-
 add_subdirectory(external/libsndfile)
 include_directories(external/libsndfile/include)
 target_link_libraries(${PROJECT} sndfile)
+
+add_subdirectory(external/assimp)
+include_directories(external/assimp/include)
+target_link_libraries(${PROJECT} assimp)
 
 set_target_properties(${PROJECT} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 
