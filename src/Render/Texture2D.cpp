@@ -41,13 +41,11 @@ namespace Render
     Texture2D::Texture2D(Texture2D&& OtherTexture) noexcept
     {
         m_id = OtherTexture.m_id;
-        m_activeId = OtherTexture.m_activeId;
         m_width = OtherTexture.m_width;
         m_height = OtherTexture.m_height;
         m_channels = OtherTexture.m_channels;
 
         OtherTexture.m_id = 0;
-        OtherTexture.m_activeId = 0;
         OtherTexture.m_width = 0;
         OtherTexture.m_height = 0;
         OtherTexture.m_channels = 0;
@@ -58,13 +56,11 @@ namespace Render
         if (m_id == OtherTexture.m_id) return *this;
 
         m_id = OtherTexture.m_id;
-        m_activeId = OtherTexture.m_activeId;
         m_width = OtherTexture.m_width;
         m_height = OtherTexture.m_height;
         m_channels = OtherTexture.m_channels;
 
         OtherTexture.m_id = 0;
-        OtherTexture.m_activeId = 0;
         OtherTexture.m_width = 0;
         OtherTexture.m_height = 0;
         OtherTexture.m_channels = 0;
@@ -86,14 +82,8 @@ namespace Render
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MagFilter);
     }
 
-    void Texture2D::setActiveId(GLuint id) noexcept
-    {
-        m_activeId = id;
-    }
-
     void Texture2D::bind() const noexcept
     {
-        glActiveTexture(GL_TEXTURE0 + m_activeId);
         glBindTexture(GL_TEXTURE_2D, m_id);
     }
 }

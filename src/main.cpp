@@ -5,7 +5,7 @@
 
 #include "Render/VertexArray.h"
 #include "Render/ShaderProgram.h"
-#include "Render/Texture2D.h"
+#include "Render/MaterialClass.h"
 #include "Render/Camera.h"
 
 #define WINDOW_WIDTH 1280
@@ -185,17 +185,14 @@ int main()
     lightVAO.addBuffer(VBO, 1, 3, 5, GL_FLOAT, (void*)(3 * sizeof(float)));
     lightVAO.addBuffer(VBO, 2, 2, 6, GL_FLOAT, (void*)(6 * sizeof(float)));
 
-    Texture2D texture1("res/Textures/container2.png");
-    Texture2D texture2("res/Textures/container2_specular.png");
-    texture1.setActiveId(0);
-    texture2.setActiveId(1);
-    texture1.bind();
-    texture2.bind();
+    MaterialClass material(std::make_unique<Texture2D>("res/Textures/container2.png"), 32.0f);
+    material.setSpecular(std::make_unique<Texture2D>("res/Textures/container2_specular.png"));
 
     Shader->use(); 
     Shader->setInt("material.diffuse", 0);
     Shader->setInt("material.specular", 1);
-    Shader->setFloat("material.shininess", 32.0f);
+    Shader->setFloat("material.shininess", material.getShiniess());
+    material.bind();
 
     Shader->setVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
     Shader->setVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));

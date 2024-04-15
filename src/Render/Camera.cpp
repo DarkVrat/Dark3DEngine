@@ -94,7 +94,6 @@ namespace Render
 		{
 			shader->use();
 			shader->setMatrix4("view", view);
-			shader->setVec3("viewPos", cameraPos);
 		}
 	}
 }

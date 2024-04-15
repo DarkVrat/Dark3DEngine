@@ -16,13 +16,11 @@ namespace Render
 		~Texture2D() noexcept;
 
 		void setParam(GLuint WrapS, GLuint WrapT, GLuint MinFilter, GLuint MagFilter) const noexcept;
-		void setActiveId(GLuint id) noexcept;
 
 		void bind() const noexcept;
 
 	private:
 		GLuint m_id;
-		GLuint m_activeId = 0;
 		int m_width;
 		int m_height;
 		int m_channels;

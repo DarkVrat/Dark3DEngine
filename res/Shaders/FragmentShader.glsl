@@ -1,10 +1,9 @@
 #version 330 core
 out vec4 FragColor;
-  
-uniform vec3 viewPos;
 
 in vec3 Normal;  
 in vec3 FragPos;  
+in vec3 ViewPos;
 in vec2 TexCoords;
 
 struct Material {
@@ -59,7 +58,7 @@ vec3 CalcFlashLight(FlashLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 void main()
 {   
     vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 viewDir = normalize(ViewPos - FragPos);
 
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
     for(int i = 0; i < NR_POINT_LIGHTS; i++)

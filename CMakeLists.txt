@@ -8,6 +8,7 @@ set(RENDER_SOURCE
     src/Render/VertexBuffer.cpp
     src/Render/VertexArray.cpp
 	src/Render/Texture2D.cpp
+	src/Render/MaterialClass.cpp
 	src/Render/Camera.cpp
 )
 
@@ -16,18 +17,31 @@ set(RENDER_HEADERS
     src/Render/VertexBuffer.h
     src/Render/VertexArray.h
 	src/Render/Texture2D.h
+	src/Render/MaterialClass.h
 	src/Render/Camera.h
 	src/Render/stb_image.h
+)
+
+set(MANAGER_SOURCE 
+    src/Manager/ResourceManager.cpp
+)
+
+set(MANAGER_HEADERS 
+    src/Manager/ResourceManager.h
 )
 
 add_executable(${PROJECT} 
 	src/main.cpp
 	${RENDER_SOURCE}
 	${RENDER_HEADERS}
+	${MANAGER_SOURCE}
+	${MANAGER_HEADERS}
 )
 
 source_group("Source Files\\Render" FILES ${RENDER_SOURCE})
 source_group("Header Files\\Render" FILES ${RENDER_HEADERS})
+source_group("Source Files\\Manager" FILES ${MANAGER_SOURCE})
+source_group("Header Files\\Manager" FILES ${MANAGER_HEADERS})
 
 target_compile_features(${PROJECT} PUBLIC cxx_std_17)
 
