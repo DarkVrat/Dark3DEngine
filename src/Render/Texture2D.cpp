@@ -16,12 +16,8 @@ namespace Render
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_set_flip_vertically_on_load(true);
-#ifdef NDEBUG
+
         unsigned char* data = stbi_load(TexturePath.c_str(), &m_width, &m_height, &m_channels, 0);
-#else
-        std::string path = "C:/Users/DarkVrat/Desktop/Dark3DEngine/" + TexturePath;
-        unsigned char* data = stbi_load(path.c_str(), &m_width, &m_height, &m_channels, 0);
-#endif
 
         if (data)
         {

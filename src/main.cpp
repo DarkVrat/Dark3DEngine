@@ -5,7 +5,7 @@
 
 #include "Render/VertexArray.h"
 #include "Render/ShaderProgram.h"
-#include "Render/MaterialClass.h"
+#include "Render/Model.h"
 #include "Render/Camera.h"
 
 #define WINDOW_WIDTH 1280
@@ -137,21 +137,8 @@ int main()
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
     };
 
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f,  2.0f, -2.5f),
-        glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
     glm::vec3 pointLightPositions[] = {
-        glm::vec3(0.7f,  0.2f,  2.0f),
+        glm::vec3(1.f,  0.7f,  0.2f),
         glm::vec3(2.3f, -3.3f, -4.0f),
         glm::vec3(-4.0f,  2.0f, -12.0f),
         glm::vec3(0.0f,  0.0f, -3.0f)
@@ -174,25 +161,14 @@ int main()
 
     VertexBuffer VBO;
     VBO.initStatic(vertices, sizeof(vertices));
-    
-    VertexArray VAO;
-    VAO.addBuffer(VBO, 0, 3, 5);
-    VAO.addBuffer(VBO, 1, 3, 5, GL_FLOAT, (void*)(3 * sizeof(float)));
-    VAO.addBuffer(VBO, 2, 2, 6, GL_FLOAT, (void*)(6 * sizeof(float)));
 
     VertexArray lightVAO;
-    lightVAO.addBuffer(VBO, 0, 3, 5); 
-    lightVAO.addBuffer(VBO, 1, 3, 5, GL_FLOAT, (void*)(3 * sizeof(float)));
-    lightVAO.addBuffer(VBO, 2, 2, 6, GL_FLOAT, (void*)(6 * sizeof(float)));
+    lightVAO.addBuffer(VBO, 0, 3, 8 * sizeof(float));
+    lightVAO.addBuffer(VBO, 1, 3, 8 * sizeof(float), 3);
+    lightVAO.addBuffer(VBO, 2, 2, 8 * sizeof(float), 6);
 
-    MaterialClass material(std::make_unique<Texture2D>("res/Textures/container2.png"), 32.0f);
-    material.setSpecular(std::make_unique<Texture2D>("res/Textures/container2_specular.png"));
-
-    Shader->use(); 
-    Shader->setInt("material.diffuse", 0);
-    Shader->setInt("material.specular", 1);
-    Shader->setFloat("material.shininess", material.getShiniess());
-    material.bind();
+    Shader->use();
+    Shader->setFloat("material.shininess", 32.f);
 
     Shader->setVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
     Shader->setVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
@@ -242,6 +218,8 @@ int main()
 
     float lastFrame = 0.0f;
 
+    Model ourModel("res/backpack/backpack.obj");
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -258,17 +236,11 @@ int main()
         Shader->setVec3("flashLight.position", Camera::getPosition());
         Shader->setVec3("flashLight.front", Camera::getFront());
 
-        VAO.bind();
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle) * static_cast<float>(glfwGetTime()) , glm::vec3(1.0f, 0.3f, 0.5f));
-            Shader->setMatrix4("model", model);
-
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+        Shader->setMatrix4("model", model);
+        ourModel.Draw(Shader);
 
         lightShader->use();
         lightVAO.bind();

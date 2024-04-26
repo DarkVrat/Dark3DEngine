@@ -71,7 +71,7 @@ namespace Render
 
 	void Camera::updatePositionCamera(float delta)
 	{
-		float cameraSpeed = 5.f * delta;
+		float cameraSpeed = 2.f * delta;
 		cameraPos += cameraSpeed * cameraFront * direction.x;
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * direction.y;
 		updateView();

@@ -28,12 +28,12 @@ namespace Render
 		glDeleteVertexArrays(1, &m_id);
 	}
 
-	void VertexArray::addBuffer(const VertexBuffer& vertexBuffer, GLuint layoutID, GLuint size, GLuint stride, GLenum type, GLvoid* pointer, bool divisor)
+	void VertexArray::addBuffer(const VertexBuffer& vertexBuffer, GLuint layoutID, GLuint sizeData, GLuint sizeFullData, GLuint pointer, GLenum type, bool divisor)
 	{
 		bind();
 		vertexBuffer.bind();
 
-		glVertexAttribPointer(layoutID, size, type, GL_FALSE, (size+stride) * sizeof(float), pointer);
+		glVertexAttribPointer(layoutID, sizeData, type, GL_FALSE, sizeFullData, reinterpret_cast<void*>(pointer * sizeof(float)));
 		glEnableVertexAttribArray(layoutID);
 
 		if (divisor) glVertexAttribDivisor(layoutID, 1);

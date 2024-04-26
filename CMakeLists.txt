@@ -10,6 +10,8 @@ set(RENDER_SOURCE
 	src/Render/Texture2D.cpp
 	src/Render/MaterialClass.cpp
 	src/Render/Camera.cpp
+	src/Render/Model.cpp
+	src/Render/Mesh.cpp
 )
 
 set(RENDER_HEADERS 
@@ -19,6 +21,8 @@ set(RENDER_HEADERS
 	src/Render/Texture2D.h
 	src/Render/MaterialClass.h
 	src/Render/Camera.h
+	src/Render/Model.h
+	src/Render/Mesh.h
 	src/Render/stb_image.h
 )
 

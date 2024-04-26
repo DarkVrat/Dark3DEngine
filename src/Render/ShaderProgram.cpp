@@ -112,7 +112,7 @@ namespace Render
 #endif // #ifndef NDEBUG
 
 		if (!file.is_open())
-			std::cout << "{E} Failed open file" << std::endl;		
+			std::cout << "{E} Failed open file "<< filePath <<  std::endl;		
 
 		std::string text="", line;
 		while (std::getline(file, line)) text += line + "\n";
