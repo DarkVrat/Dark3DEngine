@@ -91,7 +91,11 @@ int main()
 
     glClearColor(0.f, 0.f, 0.f, 1.0f);
     glEnable(GL_DEPTH_TEST);
-
+    glDepthFunc(GL_LESS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    
     float vertices[] = {
         // positions          // normals           // texture coords
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
@@ -152,20 +156,20 @@ int main()
     };
 
     std::shared_ptr<ShaderProgram> Shader = std::make_shared<ShaderProgram>("res/Shaders/VertexShader.glsl", "res/Shaders/FragmentShader.glsl");
-    std::shared_ptr<ShaderProgram> lightShader = std::make_shared<ShaderProgram>("res/Shaders/VertexShader.glsl", "res/Shaders/LightFragmentShader.glsl");
+    std::shared_ptr<ShaderProgram> colorShader = std::make_shared<ShaderProgram>("res/Shaders/VertexShader.glsl", "res/Shaders/ColorFragmentShader.glsl");
 
     Camera::addShader(Shader);
-    Camera::addShader(lightShader);
+    Camera::addShader(colorShader);
     Camera::setScreenSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
     Camera::updatePositionMouse(glm::vec2(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
 
     VertexBuffer VBO;
     VBO.initStatic(vertices, sizeof(vertices));
 
-    VertexArray lightVAO;
-    lightVAO.addBuffer(VBO, 0, 3, 8 * sizeof(float));
-    lightVAO.addBuffer(VBO, 1, 3, 8 * sizeof(float), 3);
-    lightVAO.addBuffer(VBO, 2, 2, 8 * sizeof(float), 6);
+    VertexArray colorVAO;
+    colorVAO.addBuffer(VBO, 0, 3, 8 * sizeof(float));
+    colorVAO.addBuffer(VBO, 1, 3, 8 * sizeof(float), 3);
+    colorVAO.addBuffer(VBO, 2, 2, 8 * sizeof(float), 6);
 
     Shader->use();
     Shader->setFloat("material.shininess", 32.f);
@@ -228,31 +232,50 @@ int main()
         
         processInput(window);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         Camera::updatePositionCamera(deltaTime);
         
-        Shader->use();
-        Shader->setVec3("flashLight.position", Camera::getPosition());
-        Shader->setVec3("flashLight.front", Camera::getFront());
-
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-        Shader->setMatrix4("model", model);
-        ourModel.Draw(Shader);
 
-        lightShader->use();
-        lightVAO.bind();
+        glStencilMask(0x00);
+        colorShader->use();
+        colorVAO.bind();
         for (unsigned int i = 0; i < 4; i++)
         {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, pointLightPositions[i]);
             model = glm::scale(model, glm::vec3(0.2f));
-            lightShader->setMatrix4("model", model);
-            lightShader->setVec3("colorLight", pointLightColor[i]);
+            colorShader->setMatrix4("model", model);
+            colorShader->setVec3("colorLight", pointLightColor[i]);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+        
+
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
+
+        Shader->use();
+        Shader->setVec3("flashLight.position", Camera::getPosition());
+        Shader->setVec3("flashLight.front", Camera::getFront());
+        Shader->setMatrix4("model", model);
+        ourModel.Draw(Shader);
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glDisable(GL_DEPTH_TEST);
+
+        colorShader->use();
+        colorShader->setVec3("colorLight", glm::vec3(0.f, 1.f, 0.f));
+        glm::mat4 modelST = glm::scale(model, glm::vec3(1.03f, 1.03f, 1.03f));
+        colorShader->setMatrix4("model", modelST);
+        ourModel.Draw(colorShader);
+        
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        glEnable(GL_DEPTH_TEST);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
