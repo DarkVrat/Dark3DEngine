@@ -60,6 +60,10 @@ vec3 CalcFlashLight(FlashLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {   
+	vec4 texColor = texture(material.texture_diffuse1, TexCoords);
+	if(texColor.a<0.01)
+		discard;
+
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(ViewPos - FragPos);
 
@@ -67,7 +71,7 @@ void main()
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
 
-    result += CalcFlashLight(flashLight, norm, FragPos, viewDir);    
+    //result += CalcFlashLight(flashLight, norm, FragPos, viewDir);    
     
     gl_FragColor = vec4(result, 1.0);
 }

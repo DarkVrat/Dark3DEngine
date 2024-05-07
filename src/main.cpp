@@ -7,6 +7,7 @@
 #include "Render/ShaderProgram.h"
 #include "Render/Model.h"
 #include "Render/Camera.h"
+#include "Manager/ResourceManager.h"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -91,55 +92,9 @@ int main()
 
     glClearColor(0.f, 0.f, 0.f, 1.0f);
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-    
-    float vertices[] = {
-        // positions          // normals           // texture coords
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-    };
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_CULL_FACE);
 
     glm::vec3 pointLightPositions[] = {
         glm::vec3(1.f,  0.7f,  0.2f),
@@ -149,27 +104,18 @@ int main()
     };
 
     glm::vec3 pointLightColor[] = {
-        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 0.1f, 0.1f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f)
     };
 
-    std::shared_ptr<ShaderProgram> Shader = std::make_shared<ShaderProgram>("res/Shaders/VertexShader.glsl", "res/Shaders/FragmentShader.glsl");
-    std::shared_ptr<ShaderProgram> colorShader = std::make_shared<ShaderProgram>("res/Shaders/VertexShader.glsl", "res/Shaders/ColorFragmentShader.glsl");
+    Managers::ResourceManager::loadResources("res/Resources.json");
 
-    Camera::addShader(Shader);
-    Camera::addShader(colorShader);
     Camera::setScreenSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
     Camera::updatePositionMouse(glm::vec2(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
 
-    VertexBuffer VBO;
-    VBO.initStatic(vertices, sizeof(vertices));
-
-    VertexArray colorVAO;
-    colorVAO.addBuffer(VBO, 0, 3, 8 * sizeof(float));
-    colorVAO.addBuffer(VBO, 1, 3, 8 * sizeof(float), 3);
-    colorVAO.addBuffer(VBO, 2, 2, 8 * sizeof(float), 6);
+    std::shared_ptr<ShaderProgram> Shader = Managers::ResourceManager::getShader("basic_shader");
 
     Shader->use();
     Shader->setFloat("material.shininess", 32.f);
@@ -180,9 +126,9 @@ int main()
     Shader->setVec3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
 
     Shader->setVec3("pointLights[0].position", pointLightPositions[0]);
-    Shader->setVec3("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-    Shader->setVec3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-    Shader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    Shader->setVec3("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f) * pointLightColor[0]);
+    Shader->setVec3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f) * pointLightColor[0]);
+    Shader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f) * pointLightColor[0]);
     Shader->setFloat("pointLights[0].constant", 1.0f);
     Shader->setFloat("pointLights[0].linear", 0.09f);
     Shader->setFloat("pointLights[0].quadratic", 0.032f);
@@ -222,7 +168,8 @@ int main()
 
     float lastFrame = 0.0f;
 
-    Model ourModel("res/backpack/backpack.obj");
+    std::shared_ptr<Model> backpack = Managers::ResourceManager::getModel("backpack");
+    std::shared_ptr<Model> container = Managers::ResourceManager::getModel("container");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -235,52 +182,30 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         Camera::updatePositionCamera(deltaTime);
-        
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-
-        glStencilMask(0x00);
-        colorShader->use();
-        colorVAO.bind();
-        for (unsigned int i = 0; i < 4; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, pointLightPositions[i]);
-            model = glm::scale(model, glm::vec3(0.2f));
-            colorShader->setMatrix4("model", model);
-            colorShader->setVec3("colorLight", pointLightColor[i]);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
-        
-
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilMask(0xFF);
 
         Shader->use();
         Shader->setVec3("flashLight.position", Camera::getPosition());
         Shader->setVec3("flashLight.front", Camera::getFront());
+
+        for (unsigned int i = 0; i < 4; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, pointLightPositions[i]);
+            model = glm::scale(model, glm::vec3(0.1f));
+            Shader->setMatrix4("model", model);
+            container->Draw(Shader);
+        }
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
         Shader->setMatrix4("model", model);
-        ourModel.Draw(Shader);
-
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00);
-        glDisable(GL_DEPTH_TEST);
-
-        colorShader->use();
-        colorShader->setVec3("colorLight", glm::vec3(0.f, 1.f, 0.f));
-        glm::mat4 modelST = glm::scale(model, glm::vec3(1.03f, 1.03f, 1.03f));
-        colorShader->setMatrix4("model", modelST);
-        ourModel.Draw(colorShader);
-        
-        glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 0, 0xFF);
-        glEnable(GL_DEPTH_TEST);
+        backpack->Draw(Shader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     } 
-
+    Managers::ResourceManager::clear();
     glfwTerminate();
     return 0;
 }

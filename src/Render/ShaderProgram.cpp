@@ -105,11 +105,7 @@ namespace Render
 
 	std::string ShaderProgram::loadSource(const std::string& filePath) noexcept
 	{
-#ifdef NDEBUG
 		std::ifstream file(filePath);
-#else
-		std::ifstream file("C:/Users/DarkVrat/Desktop/Dark3DEngine/" + filePath);
-#endif // #ifndef NDEBUG
 
 		if (!file.is_open())
 			std::cout << "{E} Failed open file "<< filePath <<  std::endl;		

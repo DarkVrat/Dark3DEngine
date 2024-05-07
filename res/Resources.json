@@ -1,3 +1,24 @@
 {
-	
+	"shaders": [
+		{
+		"name": "basic_shader",
+		"vertex_path": "res/Shaders/VertexShader.glsl",
+		"fragment_path": "res/Shaders/FragmentShader.glsl",
+		"camera": true
+		}
+	],
+	"objects": [
+		{
+		"name": "container",
+		"obj_path": "res/cube.obj",
+		"has_mtl": false,
+		"diffuse": "res/Textures/container2.png",
+		"specular": "res/Textures/container2_specular.png"
+		},
+		{
+		"name": "backpack",
+		"obj_path": "res/backpack/backpack.obj",
+		"has_mtl": true
+		}
+	]
 }

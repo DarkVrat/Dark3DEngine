@@ -1,27 +1,13 @@
 #include "Model.h"
 #include <map>
+#include "../Manager/TextureLoader.h"
 
 std::string directory;
 std::map<std::string, std::shared_ptr<Render::Texture2D>> mapTextures;
 
 namespace Render
 {
-	Model::Model(char* path)
-	{
-#ifdef NDEBUG
-		loadModel(path);
-#else
-		loadModel(std::string("C:/Users/DarkVrat/Desktop/Dark3DEngine/") + path);
-#endif // #ifndef NDEBUG
-	}
-
-	void Model::Draw(std::shared_ptr<ShaderProgram>& shader)
-	{
-		for (unsigned int i = 0; i < meshes.size(); i++)
-			meshes[i].Draw(shader);
-	}
-
-	void Model::loadModel(std::string path)
+	Model::Model(const std::string& path)
 	{
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -34,6 +20,33 @@ namespace Render
 		directory = path.substr(0, path.find_last_of('/'));
 
 		processNode(scene->mRootNode, scene);
+	}
+
+	void Model::Draw(std::shared_ptr<ShaderProgram>& shader)
+	{
+		if (m_textures.diffuse != nullptr)
+		{
+			glActiveTexture(GL_TEXTURE0);
+			shader->setInt("material.texture_diffuse1", 0);
+			m_textures.diffuse->bind();
+
+			if (m_textures.specular != nullptr)
+			{
+				glActiveTexture(GL_TEXTURE1);
+				shader->setInt("material.texture_specular1", 1);
+				m_textures.specular->bind();
+			}
+
+			if (m_textures.normal != nullptr)
+			{
+				glActiveTexture(GL_TEXTURE2);
+				shader->setInt("material.texture_normal1", 2);
+				m_textures.normal->bind();
+			}
+		}
+
+		for (unsigned int i = 0; i < meshes.size(); i++)
+			meshes[i].Draw(shader);
 	}
 
 	void Model::processNode(aiNode* node, const aiScene* scene)
@@ -108,7 +121,7 @@ namespace Render
 			auto it = mapTextures.find(stdStr);
 			if (it == mapTextures.end())
 			{
-				texture.texture = std::make_shared<Texture2D>(directory + "/" + stdStr);
+				texture.texture = Managers::TextureLoader::loadTexture(directory + "/" + stdStr);
 				mapTextures.emplace(stdStr, texture.texture);
 			}
 			else

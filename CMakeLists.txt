@@ -8,7 +8,6 @@ set(RENDER_SOURCE
     src/Render/VertexBuffer.cpp
     src/Render/VertexArray.cpp
 	src/Render/Texture2D.cpp
-	src/Render/MaterialClass.cpp
 	src/Render/Camera.cpp
 	src/Render/Model.cpp
 	src/Render/Mesh.cpp
@@ -19,7 +18,6 @@ set(RENDER_HEADERS
     src/Render/VertexBuffer.h
     src/Render/VertexArray.h
 	src/Render/Texture2D.h
-	src/Render/MaterialClass.h
 	src/Render/Camera.h
 	src/Render/Model.h
 	src/Render/Mesh.h
@@ -28,11 +26,15 @@ set(RENDER_HEADERS
 
 set(MANAGER_SOURCE 
     src/Manager/ResourceManager.cpp
+	src/Manager/TextureLoader.cpp
 )
 
 set(MANAGER_HEADERS 
     src/Manager/ResourceManager.h
+	src/Manager/TextureLoader.h
 )
+
+
 
 add_executable(${PROJECT} 
 	src/main.cpp
