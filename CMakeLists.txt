@@ -27,11 +27,13 @@ set(RENDER_HEADERS
 set(MANAGER_SOURCE 
     src/Manager/ResourceManager.cpp
 	src/Manager/TextureLoader.cpp
+	src/Manager/ConfigManager.cpp
 )
 
 set(MANAGER_HEADERS 
     src/Manager/ResourceManager.h
 	src/Manager/TextureLoader.h
+	src/Manager/ConfigManager.h
 )
 
 

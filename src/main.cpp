@@ -8,9 +8,12 @@
 #include "Render/Model.h"
 #include "Render/Camera.h"
 #include "Manager/ResourceManager.h"
+#include "Manager/ConfigManager.h"
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+extern "C" {
+    _declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+    _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
 
 using namespace Render;
 
@@ -65,13 +68,17 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Dark3DEngine", NULL, NULL);
+    Managers::ConfigManager::loadConfig();
+    glm::ivec2 windowSize = Managers::ConfigManager::getWindowSize();
+
+    GLFWwindow* window = glfwCreateWindow(windowSize.x, windowSize.y, "Dark3DEngine", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "{E} Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
+
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -80,15 +87,15 @@ int main()
         return -1;
     }
 
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glViewport(0, 0, windowSize.x, windowSize.y);
     glfwSetFramebufferSizeCallback(window, sizeCallback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetScrollCallback(window, scroll_callback);
-    glfwSwapInterval(0);
+    glfwSwapInterval(Managers::ConfigManager::getVSync());
    
     glEnable(GL_MULTISAMPLE);
-    glfwWindowHint(GLFW_SAMPLES, 8); 
+    glfwWindowHint(GLFW_SAMPLES, Managers::ConfigManager::getSamples()); 
 
     glClearColor(0.f, 0.f, 0.f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -112,8 +119,8 @@ int main()
 
     Managers::ResourceManager::loadResources("res/Resources.json");
 
-    Camera::setScreenSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-    Camera::updatePositionMouse(glm::vec2(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
+    Camera::setScreenSize(glm::vec2(windowSize.x, windowSize.y));
+    Camera::updatePositionMouse(glm::vec2(windowSize.x / 2, windowSize.y / 2));
 
     std::shared_ptr<ShaderProgram> Shader = Managers::ResourceManager::getShader("basic_shader");
 

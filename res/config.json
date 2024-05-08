@@ -1,0 +1,14 @@
+{
+	"window size":{
+		"width" : 1440,
+		"height" : 900 
+	},
+	
+	"full screen" : false,
+	
+	"VSync":false,
+	
+	"display" : 0,
+	
+	"samples":8
+}
