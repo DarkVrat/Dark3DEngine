@@ -5,6 +5,12 @@
 		"vertex_path": "res/Shaders/VertexShader.glsl",
 		"fragment_path": "res/Shaders/FragmentShader.glsl",
 		"camera": true
+		},
+		{
+		"name": "frame_shader",
+		"vertex_path": "res/Shaders/FrameBufferVS.glsl",
+		"fragment_path": "res/Shaders/FrameBufferFS.glsl",
+		"camera": false
 		}
 	],
 	"objects": [
@@ -19,6 +25,13 @@
 		"name": "backpack",
 		"obj_path": "res/backpack/backpack.obj",
 		"has_mtl": true
+		},
+		{
+		"name": "plane",
+		"obj_path": "res/plane.obj",
+		"has_mtl": false,
+		"diffuse": "res/Textures/blending_transparent_window.png",
+		"specular": "res/Textures/blending_transparent_window specular.png"
 		}
 	]
 }
