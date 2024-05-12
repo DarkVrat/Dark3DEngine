@@ -7,9 +7,9 @@
 		"camera": true
 		},
 		{
-		"name": "frame_shader",
-		"vertex_path": "res/Shaders/FrameBufferVS.glsl",
-		"fragment_path": "res/Shaders/FrameBufferFS.glsl",
+		"name": "post_process_shader",
+		"vertex_path": "res/Shaders/post_process_shaderVS.glsl",
+		"fragment_path": "res/Shaders/post_process_shaderFS.glsl",
 		"camera": false
 		}
 	],

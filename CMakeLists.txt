@@ -11,6 +11,7 @@ set(RENDER_SOURCE
 	src/Render/Camera.cpp
 	src/Render/Model.cpp
 	src/Render/Mesh.cpp
+	src/Render/PostProcessing.cpp
 )
 
 set(RENDER_HEADERS 
@@ -21,6 +22,7 @@ set(RENDER_HEADERS
 	src/Render/Camera.h
 	src/Render/Model.h
 	src/Render/Mesh.h
+	src/Render/PostProcessing.h
 	src/Render/stb_image.h
 )
 
