@@ -6,6 +6,7 @@
 
 std::map<std::string, std::shared_ptr<Render::ShaderProgram>> Managers::ResourceManager::m_shaders;
 std::map<std::string, std::shared_ptr<Render::Model>> Managers::ResourceManager::m_models;
+std::map<std::string, std::shared_ptr<Render::SkyboxRender>> Managers::ResourceManager::m_skyboxes;
 
 namespace Managers
 {
@@ -50,6 +51,10 @@ namespace Managers
         const auto& objects = document->FindMember("objects")->value;
         for (const auto& object : objects.GetArray())
             loadModel(object);
+
+        const auto& skyboxes = document->FindMember("skyboxes")->value;
+        for (const auto& skybox : skyboxes.GetArray())
+            loadSkybox(skybox);
     }
 
     void ResourceManager::loadShader(const rapidjson::GenericValue<rapidjson::UTF8<>>& shader)
@@ -101,6 +106,31 @@ namespace Managers
         if (model == m_models.end())
             return nullptr;
         return model->second;
+    }
+
+    void ResourceManager::loadSkybox(const rapidjson::GenericValue<rapidjson::UTF8<>>& skybox)
+    {
+        std::string name = skybox["name"].GetString();
+        std::vector<std::string> vecPath;
+        vecPath.reserve(6);
+        vecPath.push_back(getFullPath(skybox["back"].GetString()));
+        vecPath.push_back(getFullPath(skybox["bottom"].GetString()));
+        vecPath.push_back(getFullPath(skybox["front"].GetString()));
+        vecPath.push_back(getFullPath(skybox["left"].GetString()));
+        vecPath.push_back(getFullPath(skybox["right"].GetString()));
+        vecPath.push_back(getFullPath(skybox["top"].GetString()));
+
+        std::shared_ptr<Render::SkyboxRender> skybox_ptr = std::make_shared<Render::SkyboxRender>(vecPath);
+
+        m_skyboxes.emplace(name, skybox_ptr);
+    }
+
+    std::shared_ptr<Render::SkyboxRender> ResourceManager::getSkybox(const std::string& name)
+    {
+        auto skybox = m_skyboxes.find(name);
+        if (skybox == m_skyboxes.end())
+            return nullptr;
+        return skybox->second;
     }
 
     void ResourceManager::clear()

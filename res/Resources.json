@@ -11,6 +11,12 @@
 		"vertex_path": "res/Shaders/post_process_shaderVS.glsl",
 		"fragment_path": "res/Shaders/post_process_shaderFS.glsl",
 		"camera": false
+		},
+		{
+		"name": "skybox_shader",
+		"vertex_path": "res/Shaders/skyboxVS.glsl",
+		"fragment_path": "res/Shaders/skyboxFS.glsl",
+		"camera": true
 		}
 	],
 	"objects": [
@@ -32,6 +38,17 @@
 		"has_mtl": false,
 		"diffuse": "res/Textures/blending_transparent_window.png",
 		"specular": "res/Textures/blending_transparent_window specular.png"
+		}
+	],
+	"skyboxes":[
+		{
+		"name":"default_skybox",
+		"back":"res/Textures/skybox/back.jpg",
+		"bottom":"res/Textures/skybox/bottom.jpg",
+		"front":"res/Textures/skybox/front.jpg",
+		"left":"res/Textures/skybox/left.jpg",
+		"right":"res/Textures/skybox/right.jpg",
+		"top":"res/Textures/skybox/top.jpg"
 		}
 	]
 }

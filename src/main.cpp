@@ -182,6 +182,13 @@ int main()
 
     Render::PostProcessing::init();
     Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
+    Render::PostProcessing::setFilter(glm::mat3(0.5, 0, 0, 
+                                                0, 1, 0, 
+                                                0.5, 0, 0.66 ));
+    Render::PostProcessing::setTexelSize(1.f/600.f);
+
+    std::shared_ptr<SkyboxRender> skybox = Managers::ResourceManager::getSkybox("default_skybox");
+    skybox->setShader(Managers::ResourceManager::getShader("skybox_shader"));
 
     while (!glfwWindowShouldClose(window))
     {
@@ -194,6 +201,8 @@ int main()
         Render::PostProcessing::bind();
 
         Camera::updatePositionCamera(deltaTime);
+
+        skybox->render();
 
         Shader->use();
         Shader->setVec3("flashLight.position", Camera::getPosition());
