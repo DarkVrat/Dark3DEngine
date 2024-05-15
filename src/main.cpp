@@ -181,14 +181,19 @@ int main()
     std::shared_ptr<Model> plane = Managers::ResourceManager::getModel("plane");
 
     Render::PostProcessing::init();
-    Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
-    Render::PostProcessing::setFilter(glm::mat3(0.5, 0, 0, 
-                                                0, 1, 0, 
-                                                0.5, 0, 0.66 ));
-    Render::PostProcessing::setTexelSize(1.f/600.f);
+    //Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
+    //Render::PostProcessing::setFilter(glm::mat3(0.5, 0, 0, 
+    //                                            0, 1, 0, 
+    //                                            0.5, 0, 0.66 ));
+    //Render::PostProcessing::setTexelSize(1.f/1000.f);
 
     std::shared_ptr<SkyboxRender> skybox = Managers::ResourceManager::getSkybox("default_skybox");
     skybox->setShader(Managers::ResourceManager::getShader("skybox_shader"));
+
+    std::shared_ptr<ShaderProgram> ReflectShader = Managers::ResourceManager::getShader("reflect_test_shader");
+    std::shared_ptr<ShaderProgram> RefractShader = Managers::ResourceManager::getShader("refract_test_shader");
+    RefractShader->use();
+    RefractShader->setFloat("ratio", 1.f/1.52f);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -201,8 +206,6 @@ int main()
         Render::PostProcessing::bind();
 
         Camera::updatePositionCamera(deltaTime);
-
-        skybox->render();
 
         Shader->use();
         Shader->setVec3("flashLight.position", Camera::getPosition());
@@ -223,6 +226,22 @@ int main()
         Shader->setMatrix4("model", model);
         backpack->Draw(Shader);
 
+        skybox->bind();
+
+        ReflectShader->use();
+        model = glm::translate(model, glm::vec3(-2.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+        ReflectShader->setMatrix4("model", model);
+        container->Draw(ReflectShader);
+
+        RefractShader->use();
+        model = glm::translate(model, glm::vec3(-2.0f, 0.0f, 0.0f));
+        RefractShader->setMatrix4("model", model);
+        container->Draw(RefractShader);
+
+        skybox->render();
+        
+        Shader->use();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.0f));
         model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));

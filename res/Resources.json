@@ -17,6 +17,18 @@
 		"vertex_path": "res/Shaders/skyboxVS.glsl",
 		"fragment_path": "res/Shaders/skyboxFS.glsl",
 		"camera": true
+		},
+		{
+		"name": "reflect_test_shader",
+		"vertex_path": "res/Shaders/ref_test_shaderVS.glsl",
+		"fragment_path": "res/Shaders/reflect_test_shaderFS.glsl",
+		"camera": true
+		},
+		{
+		"name": "refract_test_shader",
+		"vertex_path": "res/Shaders/ref_test_shaderVS.glsl",
+		"fragment_path": "res/Shaders/refract_test_shaderFS.glsl",
+		"camera": true
 		}
 	],
 	"objects": [

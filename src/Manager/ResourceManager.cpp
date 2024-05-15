@@ -113,12 +113,12 @@ namespace Managers
         std::string name = skybox["name"].GetString();
         std::vector<std::string> vecPath;
         vecPath.reserve(6);
-        vecPath.push_back(getFullPath(skybox["back"].GetString()));
+        vecPath.push_back(getFullPath(skybox["right"].GetString()));
+        vecPath.push_back(getFullPath(skybox["left"].GetString()));
+        vecPath.push_back(getFullPath(skybox["top"].GetString()));
         vecPath.push_back(getFullPath(skybox["bottom"].GetString()));
         vecPath.push_back(getFullPath(skybox["front"].GetString()));
-        vecPath.push_back(getFullPath(skybox["left"].GetString()));
-        vecPath.push_back(getFullPath(skybox["right"].GetString()));
-        vecPath.push_back(getFullPath(skybox["top"].GetString()));
+        vecPath.push_back(getFullPath(skybox["back"].GetString()));
 
         std::shared_ptr<Render::SkyboxRender> skybox_ptr = std::make_shared<Render::SkyboxRender>(vecPath);
 

@@ -27,10 +27,12 @@ namespace Render
         };
 
 		m_VBO.initStatic(skyboxVertices, sizeof(skyboxVertices));
-		m_VAO.addBuffer(m_VBO, 0, 3, 3);
+		m_VAO.addBuffer(m_VBO, 0, 3, 3*sizeof(float));
 
         glGenTextures(1, &m_textureID);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureID);
+
+        stbi_set_flip_vertically_on_load(false);
 
         int width, height, nrChannels;
         for (unsigned int i = 0; i < paths.size(); i++)
@@ -79,9 +81,14 @@ namespace Render
         m_shader->use();
 		m_VAO.bind();
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureID);
+        bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
 		m_VAO.unbind();
         glDepthFunc(GL_LESS);
 	}
+
+    void SkyboxRender::bind()
+    {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureID);
+    }
 }
