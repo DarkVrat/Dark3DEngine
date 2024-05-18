@@ -7,8 +7,11 @@ out vec3 Position;
 out vec3 cameraPos;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+layout (std140) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
 
 void main()
 {

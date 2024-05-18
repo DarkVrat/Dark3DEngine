@@ -62,11 +62,15 @@ namespace Managers
         std::string name = shader["name"].GetString();
         std::string vertexPath = getFullPath(shader["vertex_path"].GetString());
         std::string fragmentPath = getFullPath(shader["fragment_path"].GetString());
-        bool cameraFlag = shader["camera"].GetBool();
-        
         std::shared_ptr<Render::ShaderProgram> shader_ptr = std::make_shared<Render::ShaderProgram>(vertexPath, fragmentPath);
-        if (cameraFlag)
-            Render::Camera::addShader(shader_ptr);
+
+        const auto& uniformBlocks = shader.FindMember("uniform_block")->value;
+        for (const auto& uniformBlock : uniformBlocks.GetArray())
+        {
+            std::string name = uniformBlock["name"].GetString();
+            int index = uniformBlock["index"].GetInt();
+            shader_ptr->setUniformBlock(name, index);
+        }
 
         m_shaders.emplace(name, shader_ptr);
     }

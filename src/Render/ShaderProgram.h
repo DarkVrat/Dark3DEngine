@@ -22,6 +22,8 @@ namespace Render
 
 		inline void use() const noexcept { glUseProgram(m_id); }
 
+		void setUniformBlock(const std::string& name, int index);
+
 		void ShaderProgram::setInt(const std::string& name, const GLint& value)			{ glUniform1i(location(name), value); }
 		void ShaderProgram::setFloat(const std::string& name, const GLfloat& value)		{ glUniform1f(location(name), value); }
 		void ShaderProgram::setVec3(const std::string& name, const glm::vec3& vec3)		{ glUniform3f(location(name), vec3.x, vec3.y, vec3.z); }

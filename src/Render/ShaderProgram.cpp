@@ -80,6 +80,12 @@ namespace Render
 		glDeleteProgram(m_id);
 	}
 
+	void ShaderProgram::setUniformBlock(const std::string& name, int index)
+	{
+		unsigned int uniformBlockIndexRed = glGetUniformBlockIndex(m_id, name.c_str());
+		glUniformBlockBinding(m_id, uniformBlockIndexRed, 0);
+	}
+
 	GLuint ShaderProgram::compileShader(GLenum type, const char* source) noexcept
 	{
 		GLuint result;
@@ -88,10 +94,10 @@ namespace Render
 		glCompileShader(result);
 
 		int  success;
-		char infoLog[512];
 		glGetShaderiv(result, GL_COMPILE_STATUS, &success);
 		if (!success)
 		{
+			char infoLog[512];
 			glGetShaderInfoLog(result, 512, NULL, infoLog);
 			//GL_VERTEX_SHADER = 35633
 			//GL_GEOMETRY_SHADER = 36313

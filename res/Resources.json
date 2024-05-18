@@ -4,31 +4,51 @@
 		"name": "basic_shader",
 		"vertex_path": "res/Shaders/VertexShader.glsl",
 		"fragment_path": "res/Shaders/FragmentShader.glsl",
-		"camera": true
+		"uniform_block":[
+			{
+				"name":"Matrices",
+				"index":0
+			}
+			]
 		},
 		{
 		"name": "post_process_shader",
 		"vertex_path": "res/Shaders/post_process_shaderVS.glsl",
 		"fragment_path": "res/Shaders/post_process_shaderFS.glsl",
-		"camera": false
+		"uniform_block":[]
 		},
 		{
 		"name": "skybox_shader",
 		"vertex_path": "res/Shaders/skyboxVS.glsl",
 		"fragment_path": "res/Shaders/skyboxFS.glsl",
-		"camera": true
+		"uniform_block":[
+			{
+				"name":"Matrices",
+				"index":0
+			}
+			]
 		},
 		{
 		"name": "reflect_test_shader",
 		"vertex_path": "res/Shaders/ref_test_shaderVS.glsl",
 		"fragment_path": "res/Shaders/reflect_test_shaderFS.glsl",
-		"camera": true
+		"uniform_block":[
+			{
+				"name":"Matrices",
+				"index":0
+			}
+			]
 		},
 		{
 		"name": "refract_test_shader",
 		"vertex_path": "res/Shaders/ref_test_shaderVS.glsl",
 		"fragment_path": "res/Shaders/refract_test_shaderFS.glsl",
-		"camera": true
+		"uniform_block":[
+			{
+				"name":"Matrices",
+				"index":0
+			}
+			]
 		}
 	],
 	"objects": [

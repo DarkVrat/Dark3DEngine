@@ -120,6 +120,7 @@ int main()
 
     Managers::ResourceManager::loadResources("res/Resources.json");
 
+    Camera::initMatricesUBO();
     Camera::setScreenSize(glm::vec2(windowSize.x, windowSize.y));
     Camera::updatePositionMouse(glm::vec2(windowSize.x / 2, windowSize.y / 2));
 
@@ -181,11 +182,11 @@ int main()
     std::shared_ptr<Model> plane = Managers::ResourceManager::getModel("plane");
 
     Render::PostProcessing::init();
-    //Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
-    //Render::PostProcessing::setFilter(glm::mat3(0.5, 0, 0, 
-    //                                            0, 1, 0, 
-    //                                            0.5, 0, 0.66 ));
-    //Render::PostProcessing::setTexelSize(1.f/1000.f);
+    Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
+    Render::PostProcessing::setFilter(glm::mat3(0.5, 0, 0, 
+                                                0, 1, 0, 
+                                                0.5, 0, 0.66 ));
+    Render::PostProcessing::setTexelSize(1.f/1000.f);
 
     std::shared_ptr<SkyboxRender> skybox = Managers::ResourceManager::getSkybox("default_skybox");
     skybox->setShader(Managers::ResourceManager::getShader("skybox_shader"));

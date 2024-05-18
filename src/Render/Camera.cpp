@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 glm::vec2 Render::Camera::screenSize = glm::vec2(1280.f, 720.f);
 glm::vec2 Render::Camera::lastPosMouse = glm::vec2(640.f, 360.f);
 glm::vec2 Render::Camera::direction = glm::vec2(0.f, 0.f);
@@ -9,7 +11,7 @@ glm::vec3 Render::Camera::cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float Render::Camera::fov = 70.f;
 float Render::Camera::yaw = -90.f;
 float Render::Camera::pitch = 0.f;
-std::vector<std::shared_ptr<Render::ShaderProgram>> Render::Camera::shaders;
+GLuint Render::Camera::m_matricesUBO = 0;
 
 namespace Render
 {
@@ -22,11 +24,6 @@ namespace Render
 	void Camera::setDirection(const glm::vec2 dir)
 	{
 		direction = dir;
-	}
-
-	void Camera::addShader(std::shared_ptr<ShaderProgram> ptr)
-	{
-		shaders.push_back(ptr);
 	}
 
 	void Camera::updateFov(float deltaFov)
@@ -77,23 +74,28 @@ namespace Render
 		updateView();
 	}
 
+	void Camera::initMatricesUBO()
+	{
+		glGenBuffers(1, &m_matricesUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_matricesUBO);
+		glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_matricesUBO, 0, 2 * sizeof(glm::mat4));
+	}
+
 	void Camera::updateProjection()
 	{
 		glm::mat4 projection = glm::perspective(glm::radians(fov), screenSize.x / screenSize.y, 0.01f, 100.0f);
-		for (auto shader : shaders)
-		{
-			shader->use();
-			shader->setMatrix4("projection", projection);
-		}
+		glBindBuffer(GL_UNIFORM_BUFFER, m_matricesUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
 	void Camera::updateView()
 	{
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		for (auto shader : shaders)
-		{
-			shader->use();
-			shader->setMatrix4("view", view);
-		}
+		glBindBuffer(GL_UNIFORM_BUFFER, m_matricesUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 }

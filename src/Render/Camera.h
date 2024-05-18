@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
-#include "ShaderProgram.h"
 
 namespace Render 
 {
@@ -14,8 +13,6 @@ namespace Render
 		static void setScreenSize(const glm::vec2& size);
 		static void setDirection(const glm::vec2 dir);
 
-		static void addShader(std::shared_ptr<ShaderProgram> ptr);
-
 		static void updatePositionMouse(const glm::vec2 pos);
 		static void updatePositionCamera(float delta);
 		static void updateFov(float deltaFov);
@@ -23,6 +20,8 @@ namespace Render
 		static glm::vec3 getPosition() { return cameraPos; }
 		static glm::vec3 getFront() { return cameraFront; }
 		static glm::vec3 getUp() { return cameraUp; }
+
+		static void initMatricesUBO();
 	private:
 		static void updateProjection();
 		static void updateView();
@@ -39,6 +38,6 @@ namespace Render
 		static float yaw;
 		static float pitch;
 
-		static std::vector<std::shared_ptr<ShaderProgram>> shaders;
+		static GLuint m_matricesUBO;
 	};
 }
