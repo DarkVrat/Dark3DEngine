@@ -60,9 +60,15 @@ namespace Managers
     void ResourceManager::loadShader(const rapidjson::GenericValue<rapidjson::UTF8<>>& shader)
     {
         std::string name = shader["name"].GetString();
-        std::string vertexPath = getFullPath(shader["vertex_path"].GetString());
-        std::string fragmentPath = getFullPath(shader["fragment_path"].GetString());
-        std::shared_ptr<Render::ShaderProgram> shader_ptr = std::make_shared<Render::ShaderProgram>(vertexPath, fragmentPath);
+        std::string vertexPath = shader["vertex_path"].GetString();
+        std::string fragmentPath = shader["fragment_path"].GetString();
+        std::string geometryPath = shader["geometry_path"].GetString();
+
+        std::shared_ptr<Render::ShaderProgram> shader_ptr;
+        if(geometryPath == "NULL")
+            shader_ptr = std::make_shared<Render::ShaderProgram>(getFullPath(vertexPath), getFullPath(fragmentPath));
+        else
+            shader_ptr = std::make_shared<Render::ShaderProgram>(getFullPath(vertexPath), getFullPath(geometryPath), getFullPath(fragmentPath));
 
         const auto& uniformBlocks = shader.FindMember("uniform_block")->value;
         for (const auto& uniformBlock : uniformBlocks.GetArray())

@@ -182,11 +182,11 @@ int main()
     std::shared_ptr<Model> plane = Managers::ResourceManager::getModel("plane");
 
     Render::PostProcessing::init();
-    Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
+    /*Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
     Render::PostProcessing::setFilter(glm::mat3(0.5, 0, 0, 
                                                 0, 1, 0, 
                                                 0.5, 0, 0.66 ));
-    Render::PostProcessing::setTexelSize(1.f/1000.f);
+    Render::PostProcessing::setTexelSize(1.f/1000.f);*/
 
     std::shared_ptr<SkyboxRender> skybox = Managers::ResourceManager::getSkybox("default_skybox");
     skybox->setShader(Managers::ResourceManager::getShader("skybox_shader"));
@@ -195,6 +195,8 @@ int main()
     std::shared_ptr<ShaderProgram> RefractShader = Managers::ResourceManager::getShader("refract_test_shader");
     RefractShader->use();
     RefractShader->setFloat("ratio", 1.f/1.52f);
+
+    std::shared_ptr<ShaderProgram> geometryShader = Managers::ResourceManager::getShader("geometry_shader");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -226,6 +228,10 @@ int main()
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
         Shader->setMatrix4("model", model);
         backpack->Draw(Shader);
+
+        geometryShader->use();
+        geometryShader->setMatrix4("model", model);
+        backpack->Draw(geometryShader);
 
         skybox->bind();
 

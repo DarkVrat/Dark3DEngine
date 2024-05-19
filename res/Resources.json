@@ -4,6 +4,7 @@
 		"name": "basic_shader",
 		"vertex_path": "res/Shaders/VertexShader.glsl",
 		"fragment_path": "res/Shaders/FragmentShader.glsl",
+		"geometry_path":"NULL",
 		"uniform_block":[
 			{
 				"name":"Matrices",
@@ -15,12 +16,14 @@
 		"name": "post_process_shader",
 		"vertex_path": "res/Shaders/post_process_shaderVS.glsl",
 		"fragment_path": "res/Shaders/post_process_shaderFS.glsl",
+		"geometry_path":"NULL",
 		"uniform_block":[]
 		},
 		{
 		"name": "skybox_shader",
 		"vertex_path": "res/Shaders/skyboxVS.glsl",
 		"fragment_path": "res/Shaders/skyboxFS.glsl",
+		"geometry_path":"NULL",
 		"uniform_block":[
 			{
 				"name":"Matrices",
@@ -32,6 +35,7 @@
 		"name": "reflect_test_shader",
 		"vertex_path": "res/Shaders/ref_test_shaderVS.glsl",
 		"fragment_path": "res/Shaders/reflect_test_shaderFS.glsl",
+		"geometry_path":"NULL",
 		"uniform_block":[
 			{
 				"name":"Matrices",
@@ -43,6 +47,19 @@
 		"name": "refract_test_shader",
 		"vertex_path": "res/Shaders/ref_test_shaderVS.glsl",
 		"fragment_path": "res/Shaders/refract_test_shaderFS.glsl",
+		"geometry_path":"NULL",
+		"uniform_block":[
+			{
+				"name":"Matrices",
+				"index":0
+			}
+			]
+		},
+		{
+		"name": "geometry_shader",
+		"vertex_path": "res/Shaders/geometry_VS.glsl",
+		"fragment_path": "res/Shaders/geometry_FS.glsl",
+		"geometry_path":"res/Shaders/geometry_GS.glsl",
 		"uniform_block":[
 			{
 				"name":"Matrices",
