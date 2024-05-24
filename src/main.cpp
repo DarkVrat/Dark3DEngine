@@ -65,8 +65,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 int main()
 {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     Managers::ConfigManager::loadConfig();
@@ -198,6 +198,28 @@ int main()
 
     std::shared_ptr<ShaderProgram> geometryShader = Managers::ResourceManager::getShader("geometry_shader");
 
+    //
+    unsigned int amount = 100;
+    std::vector<glm::mat4> modelMatrices;
+    modelMatrices.reserve(amount);
+    srand(glfwGetTime());
+    for (unsigned int i = 0; i < amount; i++)
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        float x = -50.f + (rand() % 100);
+        float y = -50.f + (rand() % 100);
+        float z = -50.f + (rand() % 100);
+        model = glm::translate(model, glm::vec3(x, y, z));
+        model = glm::scale(model, glm::vec3(1, 1, 1));
+        float rotAngle = (rand() % 360);
+        model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+    }
+    //
+
+    std::shared_ptr<ShaderProgram> inctShader = Managers::ResourceManager::getShader("inctanced_shader");
+    std::shared_ptr<Model> contInct = Managers::ResourceManager::getModel("container4instanced");
+    contInct->inctancedData(modelMatrices);
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -232,6 +254,8 @@ int main()
         geometryShader->use();
         geometryShader->setMatrix4("model", model);
         backpack->Draw(geometryShader);
+
+        contInct->DrawInctanced(inctShader);
 
         skybox->bind();
 

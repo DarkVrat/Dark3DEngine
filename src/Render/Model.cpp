@@ -49,6 +49,62 @@ namespace Render
 			meshes[i].Draw(shader);
 	}
 
+	void Model::DrawInctanced(std::shared_ptr<ShaderProgram>& shader)
+	{
+		shader->use();
+		if (m_textures.diffuse != nullptr)
+		{
+			glActiveTexture(GL_TEXTURE0);
+			shader->setInt("material.texture_diffuse1", 0);
+			m_textures.diffuse->bind();
+
+			if (m_textures.specular != nullptr)
+			{
+				glActiveTexture(GL_TEXTURE1);
+				shader->setInt("material.texture_specular1", 1);
+				m_textures.specular->bind();
+			}
+
+			if (m_textures.normal != nullptr)
+			{
+				glActiveTexture(GL_TEXTURE2);
+				shader->setInt("material.texture_normal1", 2);
+				m_textures.normal->bind();
+			}
+		}
+
+		for (unsigned int i = 0; i < meshes.size(); i++)
+		{
+			meshes[i].getVAO().bind();
+			meshes[i].getEBO().bind();
+			glDrawElementsInstanced(GL_TRIANGLES, meshes[i].getIndicesCount(), GL_UNSIGNED_INT, 0, m_inctenceCount);
+		}
+	}
+
+	void Model::inctancedData(const std::vector<glm::mat4>& data)
+	{
+		m_VBOInctanced = std::make_unique<VertexBuffer>();
+		m_VBOInctanced->initStatic(data.data(), data.size() * sizeof(glm::mat4));
+		m_inctenceCount = data.size();
+
+		for (unsigned int i = 0; i < meshes.size(); i++)
+		{
+			VertexArray& VAO = meshes[i].getVAO();
+			VAO.bind();
+			// vertex attributes
+			VAO.addBuffer(*m_VBOInctanced, 3, 4, sizeof(glm::mat4), 0);
+			VAO.setDivisor(3, 1);
+			VAO.addBuffer(*m_VBOInctanced, 4, 4, sizeof(glm::mat4), 1 * sizeof(glm::vec4));
+			VAO.setDivisor(4, 1);
+			VAO.addBuffer(*m_VBOInctanced, 5, 4, sizeof(glm::mat4), 2 * sizeof(glm::vec4));
+			VAO.setDivisor(5, 1);
+			VAO.addBuffer(*m_VBOInctanced, 6, 4, sizeof(glm::mat4), 3 * sizeof(glm::vec4));
+			VAO.setDivisor(6, 1);
+
+			VAO.unbind();
+		}
+	}
+
 	void Model::processNode(aiNode* node, const aiScene* scene)
 	{
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)

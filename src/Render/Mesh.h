@@ -25,6 +25,9 @@ namespace Render
     public:
         Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
         void Draw(std::shared_ptr<ShaderProgram> shader);
+        VertexArray& getVAO() { return m_VAO; }
+        VertexBuffer& getEBO() { return m_EBO; }
+        size_t getIndicesCount() { return m_indicesCount; }
     private:
         std::vector<Texture> m_textures;
         size_t m_indicesCount;

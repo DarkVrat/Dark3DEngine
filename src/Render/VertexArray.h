@@ -15,7 +15,8 @@ namespace Render
 		VertexArray& operator=(VertexArray&& vertexArray) noexcept;
 		~VertexArray() noexcept;
 
-		void addBuffer(const VertexBuffer& vertexBuffer, GLuint layoutID, GLuint sizeData, GLuint sizeFullData, GLuint pointer = 0, GLenum type = GL_FLOAT, bool divisor = false);
+		void addBuffer(const VertexBuffer& vertexBuffer, GLuint layoutID, GLuint sizeData, GLuint sizeFullData, GLuint pointer = 0, GLenum type = GL_FLOAT);
+		void setDivisor(GLuint layoutID, int divisor);
 		void bind() const;
 
 		static void unbind();

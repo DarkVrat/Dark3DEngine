@@ -67,10 +67,30 @@
 			}
 			]
 		}
+		,
+		{
+		"name": "inctanced_shader",
+		"vertex_path": "res/Shaders/Instanced_VS.glsl",
+		"fragment_path": "res/Shaders/Instanced_FS.glsl",
+		"geometry_path":"NULL",
+		"uniform_block":[
+			{
+				"name":"Matrices",
+				"index":0
+			}
+			]
+		}
 	],
 	"objects": [
 		{
 		"name": "container",
+		"obj_path": "res/cube.obj",
+		"has_mtl": false,
+		"diffuse": "res/Textures/container2.png",
+		"specular": "res/Textures/container2_specular.png"
+		},
+		{
+		"name": "container4instanced",
 		"obj_path": "res/cube.obj",
 		"has_mtl": false,
 		"diffuse": "res/Textures/container2.png",
