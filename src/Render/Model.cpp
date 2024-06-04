@@ -92,15 +92,14 @@ namespace Render
 			VertexArray& VAO = meshes[i].getVAO();
 			VAO.bind();
 			// vertex attributes
-			VAO.addBuffer(*m_VBOInctanced, 3, 4, sizeof(glm::mat4), 0);
+			VAO.addBuffer(*m_VBOInctanced, 3, 4, sizeof(glm::mat4));
 			VAO.setDivisor(3, 1);
-			VAO.addBuffer(*m_VBOInctanced, 4, 4, sizeof(glm::mat4), 1 * sizeof(glm::vec4));
+			VAO.addBuffer(*m_VBOInctanced, 4, 4, sizeof(glm::mat4), 4);
 			VAO.setDivisor(4, 1);
-			VAO.addBuffer(*m_VBOInctanced, 5, 4, sizeof(glm::mat4), 2 * sizeof(glm::vec4));
+			VAO.addBuffer(*m_VBOInctanced, 5, 4, sizeof(glm::mat4), 2 * 4);
 			VAO.setDivisor(5, 1);
-			VAO.addBuffer(*m_VBOInctanced, 6, 4, sizeof(glm::mat4), 3 * sizeof(glm::vec4));
+			VAO.addBuffer(*m_VBOInctanced, 6, 4, sizeof(glm::mat4), 3 * 4);
 			VAO.setDivisor(6, 1);
-
 			VAO.unbind();
 		}
 	}

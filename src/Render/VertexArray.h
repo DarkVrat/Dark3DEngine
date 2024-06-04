@@ -20,8 +20,8 @@ namespace Render
 		void bind() const;
 
 		static void unbind();
-
+GLuint m_id = 0;
 	private:
-		GLuint m_id = 0;
+		
 	};
 }

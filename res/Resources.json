@@ -66,8 +66,7 @@
 				"index":0
 			}
 			]
-		}
-		,
+		},
 		{
 		"name": "inctanced_shader",
 		"vertex_path": "res/Shaders/Instanced_VS.glsl",

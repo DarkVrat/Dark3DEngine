@@ -85,7 +85,7 @@ namespace Render
 
 	void Camera::updateProjection()
 	{
-		glm::mat4 projection = glm::perspective(glm::radians(fov), screenSize.x / screenSize.y, 0.01f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(fov), screenSize.x / screenSize.y, 0.01f, 200.0f);
 		glBindBuffer(GL_UNIFORM_BUFFER, m_matricesUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);

@@ -198,23 +198,30 @@ int main()
 
     std::shared_ptr<ShaderProgram> geometryShader = Managers::ResourceManager::getShader("geometry_shader");
 
-    //
-    unsigned int amount = 100;
+    unsigned int amount = 1000;
     std::vector<glm::mat4> modelMatrices;
     modelMatrices.reserve(amount);
     srand(glfwGetTime());
+    float radius = 100.0;
+    float offset = 25.0f;
     for (unsigned int i = 0; i < amount; i++)
     {
         glm::mat4 model = glm::mat4(1.0f);
-        float x = -50.f + (rand() % 100);
-        float y = -50.f + (rand() % 100);
-        float z = -50.f + (rand() % 100);
+        float angle = (float)i / (float)amount * 360.0f;
+        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float x = sin(angle) * radius + displacement;
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float y = displacement * 0.4f;
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float z = cos(angle) * radius + displacement;
         model = glm::translate(model, glm::vec3(x, y, z));
-        model = glm::scale(model, glm::vec3(1, 1, 1));
-        float rotAngle = (rand() % 360);
+        float scale = static_cast<float>((rand() % 20) / 100.0 + 0.05);
+        model = glm::scale(model, glm::vec3(scale*2));
+        float rotAngle = static_cast<float>((rand() % 360));
         model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+        modelMatrices.push_back(model);
     }
-    //
+
 
     std::shared_ptr<ShaderProgram> inctShader = Managers::ResourceManager::getShader("inctanced_shader");
     std::shared_ptr<Model> contInct = Managers::ResourceManager::getModel("container4instanced");
