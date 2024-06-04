@@ -198,12 +198,12 @@ int main()
 
     std::shared_ptr<ShaderProgram> geometryShader = Managers::ResourceManager::getShader("geometry_shader");
 
-    unsigned int amount = 1000;
+    unsigned int amount = 1000000;
     std::vector<glm::mat4> modelMatrices;
     modelMatrices.reserve(amount);
     srand(glfwGetTime());
-    float radius = 100.0;
-    float offset = 25.0f;
+    float radius = 50.0;
+    float offset = 15.0f;
     for (unsigned int i = 0; i < amount; i++)
     {
         glm::mat4 model = glm::mat4(1.0f);

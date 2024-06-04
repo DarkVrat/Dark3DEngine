@@ -21,7 +21,11 @@ namespace Render
 		static VertexBuffer m_VBO;
 		static std::unique_ptr<VertexArray> m_VAO;
 		static std::shared_ptr<ShaderProgram> m_shader;
-		static GLuint m_framebuffer, m_textureColorbuffer, m_rbo;
+		static GLuint m_framebuffer;
+		static GLuint m_textureColorBufferMultiSampled;
+		static GLuint m_rbo;
+		static GLuint m_intermediateFBO;
+		static GLuint m_screenTexture;
 
 		static glm::mat3 m_kernel;
 		static glm::mat3 m_filter;
