@@ -96,16 +96,18 @@
 		"specular": "res/Textures/container2_specular.png"
 		},
 		{
-		"name": "backpack",
-		"obj_path": "res/backpack/backpack.obj",
-		"has_mtl": true
-		},
-		{
 		"name": "plane",
 		"obj_path": "res/plane.obj",
 		"has_mtl": false,
 		"diffuse": "res/Textures/blending_transparent_window.png",
 		"specular": "res/Textures/blending_transparent_window specular.png"
+		},
+		{
+		"name": "floor",
+		"obj_path": "res/plane.obj",
+		"has_mtl": false,
+		"diffuse": "res/Textures/wood-4.png",
+		"specular": "res/Textures/wood-4-5.png"
 		}
 	],
 	"skyboxes":[

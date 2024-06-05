@@ -43,6 +43,8 @@ namespace Render
 				shader->setInt("material.texture_normal1", 2);
 				m_textures.normal->bind();
 			}
+
+			shader->setFloat("material.shininess", 128.f);
 		}
 
 		for (unsigned int i = 0; i < meshes.size(); i++)
