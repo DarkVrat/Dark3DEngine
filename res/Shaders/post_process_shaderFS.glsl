@@ -7,6 +7,7 @@ uniform sampler2D screenTexture;
 uniform mat3 kernel;
 uniform mat3 filter;
 uniform float texelSize;
+uniform float gamma;
 
 void main()
 {
@@ -20,5 +21,5 @@ void main()
     
 	col = filter * col;
 	
-    FragColor = vec4(col, 1.0);
+    FragColor = vec4(pow(col, vec3(1.0/gamma)), 1.0);
 }  

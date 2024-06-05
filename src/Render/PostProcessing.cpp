@@ -16,7 +16,8 @@ GLuint Render::PostProcessing::m_screenTexture;
 
 glm::mat3 Render::PostProcessing::m_kernel = glm::mat3(0,0,0,0,1,0,0,0,0);
 glm::mat3 Render::PostProcessing::m_filter = glm::mat3(1);
-float Render::PostProcessing::m_texelSize = 1./1000.f;
+float Render::PostProcessing::m_texelSize = 1.f / 1000.f;
+float Render::PostProcessing::m_gamma = 0.675f;
 
 namespace Render
 {
@@ -77,6 +78,7 @@ namespace Render
         m_shader->setMatrix3("kernel", m_kernel);
         m_shader->setMatrix3("filter", m_filter);
         m_shader->setFloat("texelSize", m_texelSize);
+        m_shader->setFloat("gamma", m_gamma);
 	}
 
     void PostProcessing::bind()
@@ -139,6 +141,16 @@ namespace Render
         {
             m_shader->use();
             m_shader->setFloat("texelSize", m_texelSize);
+        }
+    }
+
+    void PostProcessing::setGamma(const float& gamma)
+    {
+        m_gamma = gamma;
+        if (m_shader != nullptr)
+        {
+            m_shader->use();
+            m_shader->setFloat("gamma", m_gamma);
         }
     }
 }
