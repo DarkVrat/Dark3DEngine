@@ -1,0 +1,27 @@
+[submodule "external/assimp"]
+    path = external/assimp
+    url = https://github.com/assimp/assimp.git
+
+[submodule "external/freetype"]
+    path = external/freetype
+    url = https://gitlab.freedesktop.org/freetype/freetype.git
+
+[submodule "external/glfw"]
+    path = external/glfw
+    url = https://github.com/glfw/glfw.git
+
+[submodule "external/glm"]
+    path = external/glm
+    url = https://github.com/g-truc/glm.git
+
+[submodule "external/libsndfile"]
+    path = external/libsndfile
+    url = https://github.com/libsndfile/libsndfile.git
+
+[submodule "external/openal-soft"]
+    path = external/openal-soft
+    url = https://github.com/kcat/openal-soft.git
+
+[submodule "external/rapidjson"]
+    path = external/rapidjson
+    url = https://github.com/Tencent/rapidjson.git
