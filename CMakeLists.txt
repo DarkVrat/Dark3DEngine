@@ -13,6 +13,7 @@ set(RENDER_SOURCE
 	src/Render/Mesh.cpp
 	src/Render/PostProcessing.cpp
 	src/Render/SkyboxRender.cpp
+	src/Render/ShadowMap.cpp
 )
 
 set(RENDER_HEADERS 
@@ -25,6 +26,7 @@ set(RENDER_HEADERS
 	src/Render/Mesh.h
 	src/Render/PostProcessing.h
 	src/Render/SkyboxRender.h
+	src/Render/ShadowMap.h
 	src/Render/stb_image.h
 )
 

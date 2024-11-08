@@ -25,6 +25,20 @@
 			]
 		},
 		{
+		"name": "shadow_depth",
+		"vertex_path": "res/Shaders/shadow_depth.vs",
+		"fragment_path": "res/Shaders/shadow_depth.fs",
+		"geometry_path":"NULL",
+		"uniform_block":[]
+		},
+		{
+		"name": "depth_debug",
+		"vertex_path": "res/Shaders/depth_debug.vs",
+		"fragment_path": "res/Shaders/depth_debug.fs",
+		"geometry_path":"NULL",
+		"uniform_block":[]
+		},
+		{
 		"name": "post_process_shader",
 		"vertex_path": "res/Shaders/post_process_shader.vs",
 		"fragment_path": "res/Shaders/post_process_shader.fs",

@@ -10,6 +10,7 @@
 #include "Manager/ResourceManager.h"
 #include "Manager/ConfigManager.h"
 #include "Render/PostProcessing.h"
+#include "Render/ShadowMap.h"
 
 extern "C" {
     _declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
@@ -145,6 +146,34 @@ int main()
     std::shared_ptr<Model> container = Managers::ResourceManager::getModel("container");
     std::shared_ptr<Model> floor = Managers::ResourceManager::getModel("floor");
 
+    ShadowMap shadowMap;
+    std::shared_ptr<ShaderProgram> depthShader = Managers::ResourceManager::getShader("shadow_depth");
+
+    glm::vec3 lightPos(0.0f, 4.0f, 0.0f);
+
+    float quadVertices[] = {
+        // positions   // texture Coords
+        -1.0f,  1.0f,  0.0f, 1.0f,  // Верхний левый угол
+        -1.0f, -1.0f,  0.0f, 0.0f,  // Нижний левый угол
+         1.0f,  1.0f,  1.0f, 1.0f,  // Верхний правый угол
+         1.0f, -1.0f,  1.0f, 0.0f   // Нижний правый угол
+    };
+
+    // VBO и VAO для квадрата
+    unsigned int quadVAO, quadVBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glBindVertexArray(0);
+
+    std::shared_ptr<ShaderProgram> quadShader = Managers::ResourceManager::getShader("depth_debug");
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -153,11 +182,57 @@ int main()
         
         processInput(window);
 
+        glm::mat4 lightProjection, lightView;
+        glm::mat4 lightSpaceMatrix;
+
+        float near_plane = 0.0f, far_plane = 10.f;
+        lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+        glm::vec3 direction = glm::normalize(glm::vec3(sin(currentFrame / 8), -3.f, cos(currentFrame / 8)));
+        glm::vec3 globalUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 right = glm::normalize(glm::cross(globalUp, direction));
+        glm::vec3 newUp = glm::normalize(glm::cross(direction, right));
+        
+        lightView = glm::lookAt(lightPos, lightPos+direction, newUp);
+        lightSpaceMatrix = lightProjection * lightView;
+
+        depthShader->use();
+        depthShader->setMatrix4("lightSpaceMatrix", lightSpaceMatrix);
+
+        shadowMap.bindDepthMap();
+
+        {
+            for (unsigned int i = 0; i < 3; i++)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, containersPositions[i]);
+                model = glm::rotate(model, glm::radians(rotateRadians[i]), containersRotates[i]);
+                model = glm::scale(model, containersScales[i]);
+                depthShader->setMatrix4("model", model);
+                container->Draw(depthShader);
+            }
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.f, -0.5f, 0.f));
+            model = glm::rotate(model, glm::radians(90.f), glm::vec3(0, 0, 1));
+            model = glm::scale(model, glm::vec3(4.f, 4.f, 4.f));
+            depthShader->setMatrix4("model", model);
+            floor->Draw(depthShader);
+            shadowMap.unbindFramebuffer();
+        }
+
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glViewport(0, 0, windowSize.x, windowSize.y);
 
         Camera::updatePositionCamera(deltaTime);
 
         Shader->use();
+        Shader->setVec3("dirLight.direction", direction);
+        Shader->setMatrix4("lightSpaceMatrix", lightSpaceMatrix);
+        Shader->setInt("shadowMap", 2);
+        shadowMap.bindShadowMapTexture(2);
+
 
         for (unsigned int i = 0; i < 3; i++)
         {
@@ -172,9 +247,21 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.f, -0.5f, 0.f));
         model = glm::rotate(model, glm::radians(90.f), glm::vec3(0, 0, 1));
-        model = glm::scale(model, glm::vec3(4.f,4.f,4.f));
+        model = glm::scale(model, glm::vec3(30.f));
         Shader->setMatrix4("model", model);
         floor->Draw(Shader);
+
+
+        glViewport(0, 0, 200, 200);  // Размер карты теней на экране
+        quadShader->use();
+        quadShader->setInt("shadowMap", 1);
+        glBindVertexArray(quadVAO);
+        shadowMap.bindShadowMapTexture(1); // Привязка карты теней к текстурному блоку 1
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+
+        // Вернуть нормальный вьюпорт для следующего рендера
+        glViewport(0, 0, windowSize.x, windowSize.y);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
