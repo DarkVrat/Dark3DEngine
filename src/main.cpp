@@ -104,18 +104,24 @@ int main()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_CULL_FACE);
 
-    glm::vec3 pointLightPositions[] = {
-        glm::vec3(3.f,0.f,3.f),
-        glm::vec3(-3.f,0.f,3.f),
-        glm::vec3(3.f,0.f,-3.f),
-        glm::vec3(-3.f,0.f,-3.f)
+    glm::vec3 containersPositions[] = {
+        glm::vec3(0.f,1.5f,0.f),
+        glm::vec3(2.f,0.f,1.f),
+        glm::vec3(-1.f,0.f,-2.f),
     };
 
-    glm::vec3 pointLightColor[] = {
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(1.0f, 1.0f, 1.0f)
+    glm::vec3 containersScales[] = {
+        glm::vec3(0.5f),
+        glm::vec3(0.5f),
+        glm::vec3(0.25f),
+    };
+
+    float rotateRadians[] = { 0.f, 0.f, 60.f };
+
+    glm::vec3 containersRotates[] = {
+        glm::vec3(1.f,0.f,0.f),
+        glm::vec3(1.f,0.f,0.f),
+        glm::vec3(1.f,0.f,1.f),
     };
 
     Managers::ResourceManager::loadResources("res/Resources.json");
@@ -124,108 +130,20 @@ int main()
     Camera::setScreenSize(glm::vec2(windowSize.x, windowSize.y));
     Camera::updatePositionMouse(glm::vec2(windowSize.x / 2, windowSize.y / 2));
 
-    std::shared_ptr<ShaderProgram> Shader = Managers::ResourceManager::getShader("basic_shader");
+    std::shared_ptr<ShaderProgram> Shader = Managers::ResourceManager::getShader("shadow_shader");
 
     Shader->use();
     Shader->setFloat("material.shininess", 32.f);
 
     Shader->setVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
-    Shader->setVec3("dirLight.ambient", glm::vec3(0.01f, 0.01f, 0.01f));
-    Shader->setVec3("dirLight.diffuse", glm::vec3(0.1f, 0.1f, 0.1f));
-    Shader->setVec3("dirLight.specular", glm::vec3(0.15f, 0.15f, 0.15f));
-
-    Shader->setVec3("pointLights[0].position", pointLightPositions[0]);
-    Shader->setVec3("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f) * pointLightColor[0]);
-    Shader->setVec3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f) * pointLightColor[0]);
-    Shader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f) * pointLightColor[0]);
-    Shader->setFloat("pointLights[0].constant", 1.0f);
-    Shader->setFloat("pointLights[0].linear", 0.09f);
-    Shader->setFloat("pointLights[0].quadratic", 0.032f);
-
-    Shader->setVec3("pointLights[1].position", pointLightPositions[1]);
-    Shader->setVec3("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f) * pointLightColor[1]);
-    Shader->setVec3("pointLights[1].diffuse", glm::vec3(0.8f, 0.8f, 0.8f) * pointLightColor[1]);
-    Shader->setVec3("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f) * pointLightColor[1]);
-    Shader->setFloat("pointLights[1].constant", 1.0f);
-    Shader->setFloat("pointLights[1].linear", 0.09f);
-    Shader->setFloat("pointLights[1].quadratic", 0.032f);
-
-    Shader->setVec3("pointLights[2].position", pointLightPositions[2]);
-    Shader->setVec3("pointLights[2].ambient", glm::vec3(0.05f, 0.05f, 0.05f) * pointLightColor[2]);
-    Shader->setVec3("pointLights[2].diffuse", glm::vec3(0.8f, 0.8f, 0.8f) * pointLightColor[2]);
-    Shader->setVec3("pointLights[2].specular", glm::vec3(1.0f, 1.0f, 1.0f) * pointLightColor[2]);
-    Shader->setFloat("pointLights[2].constant", 1.0f);
-    Shader->setFloat("pointLights[2].linear", 0.09f);
-    Shader->setFloat("pointLights[2].quadratic", 0.032f);
-
-    Shader->setVec3("pointLights[3].position", pointLightPositions[3]);
-    Shader->setVec3("pointLights[3].ambient", glm::vec3(0.05f, 0.05f, 0.05f) * pointLightColor[3]);
-    Shader->setVec3("pointLights[3].diffuse", glm::vec3(0.8f, 0.8f, 0.8f) * pointLightColor[3]);
-    Shader->setVec3("pointLights[3].specular", glm::vec3(1.0f, 1.0f, 1.0f) * pointLightColor[3]);
-    Shader->setFloat("pointLights[3].constant", 1.0f);
-    Shader->setFloat("pointLights[3].linear", 0.09f);
-    Shader->setFloat("pointLights[3].quadratic", 0.032f);
-    
-    Shader->setVec3("flashLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-    Shader->setVec3("flashLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-    Shader->setVec3("flashLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-    Shader->setFloat("flashLight.constant", 1.0f);
-    Shader->setFloat("flashLight.linear", 0.09f);
-    Shader->setFloat("flashLight.quadratic", 0.032f);
-    Shader->setFloat("flashLight.cutOff", glm::cos(glm::radians(12.5f)));
-    Shader->setFloat("flashLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+    Shader->setVec3("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+    Shader->setVec3("dirLight.diffuse", glm::vec3(0.9f, 0.9f, 0.9f));
+    Shader->setVec3("dirLight.specular", glm::vec3(0.2f, 0.2f, 0.2f));
 
     float lastFrame = 0.0f;
 
-    //std::shared_ptr<Model> backpack = Managers::ResourceManager::getModel("backpack");
     std::shared_ptr<Model> container = Managers::ResourceManager::getModel("container");
     std::shared_ptr<Model> floor = Managers::ResourceManager::getModel("floor");
-
-    Render::PostProcessing::init();
-    /*Render::PostProcessing::setKernel(glm::mat3(-1, -1, -1, -1, 9, -1, -1, -1, -1));
-    Render::PostProcessing::setFilter(glm::mat3(0.5, 0, 0, 
-                                                0, 1, 0, 
-                                                0.5, 0, 0.66 ));
-    Render::PostProcessing::setTexelSize(1.f/1000.f);*/
-
-    /*std::shared_ptr<SkyboxRender> skybox = Managers::ResourceManager::getSkybox("default_skybox");
-    skybox->setShader(Managers::ResourceManager::getShader("skybox_shader"));
-
-    std::shared_ptr<ShaderProgram> ReflectShader = Managers::ResourceManager::getShader("reflect_test_shader");
-    std::shared_ptr<ShaderProgram> RefractShader = Managers::ResourceManager::getShader("refract_test_shader");
-    RefractShader->use();
-    RefractShader->setFloat("ratio", 1.f/1.52f);
-
-    std::shared_ptr<ShaderProgram> geometryShader = Managers::ResourceManager::getShader("geometry_shader");
-
-    unsigned int amount = 1000000;
-    std::vector<glm::mat4> modelMatrices;
-    modelMatrices.reserve(amount);
-    srand(glfwGetTime());
-    float radius = 50.0;
-    float offset = 15.0f;
-    for (unsigned int i = 0; i < amount; i++)
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        float angle = (float)i / (float)amount * 360.0f;
-        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float x = sin(angle) * radius + displacement;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = displacement * 0.4f;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float z = cos(angle) * radius + displacement;
-        model = glm::translate(model, glm::vec3(x, y, z));
-        float scale = static_cast<float>((rand() % 20) / 100.0 + 0.05);
-        model = glm::scale(model, glm::vec3(scale*2));
-        float rotAngle = static_cast<float>((rand() % 360));
-        model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
-        modelMatrices.push_back(model);
-    }
-
-
-    std::shared_ptr<ShaderProgram> inctShader = Managers::ResourceManager::getShader("inctanced_shader");
-    std::shared_ptr<Model> contInct = Managers::ResourceManager::getModel("container4instanced");
-    contInct->inctancedData(modelMatrices);*/
 
     while (!glfwWindowShouldClose(window))
     {
@@ -235,75 +153,32 @@ int main()
         
         processInput(window);
 
-        Render::PostProcessing::bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         Camera::updatePositionCamera(deltaTime);
 
         Shader->use();
-        Shader->setVec3("flashLight.position", Camera::getPosition());
-        Shader->setVec3("flashLight.front", Camera::getFront());
 
-        for (unsigned int i = 0; i < 4; i++)
+        for (unsigned int i = 0; i < 3; i++)
         {
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, pointLightPositions[i]);
-            model = glm::scale(model, glm::vec3(0.1f));
+            model = glm::translate(model, containersPositions[i]);
+            model = glm::rotate(model, glm::radians(rotateRadians[i]), containersRotates[i]);
+            model = glm::scale(model, containersScales[i]);
             Shader->setMatrix4("model", model);
             container->Draw(Shader);
         }
 
         glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.f, -0.5f, 0.f));
         model = glm::rotate(model, glm::radians(90.f), glm::vec3(0, 0, 1));
-        model = glm::translate(model, glm::vec3(-3.f, 0.f, 0.f));
-        model = glm::scale(model, glm::vec3(8.f,8.f,8.f));
+        model = glm::scale(model, glm::vec3(4.f,4.f,4.f));
         Shader->setMatrix4("model", model);
         floor->Draw(Shader);
-
-        /*glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-        Shader->setMatrix4("model", model);
-        backpack->Draw(Shader);
-
-        geometryShader->use();
-        geometryShader->setMatrix4("model", model);
-        backpack->Draw(geometryShader);
-
-        contInct->DrawInctanced(inctShader);
-
-        skybox->bind();
-
-        ReflectShader->use();
-        model = glm::translate(model, glm::vec3(-2.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-        ReflectShader->setMatrix4("model", model);
-        container->Draw(ReflectShader);
-
-        RefractShader->use();
-        model = glm::translate(model, glm::vec3(-2.0f, 0.0f, 0.0f));
-        RefractShader->setMatrix4("model", model);
-        container->Draw(RefractShader);
-
-        skybox->render();
-        
-        Shader->use();
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.0f));
-        model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-        Shader->setMatrix4("model", model);
-        plane->Draw(Shader);
-
-        model = glm::translate(model, glm::vec3(-0.15f, 0.15f, 0.15f));
-        Shader->setMatrix4("model", model);
-        plane->Draw(Shader);*/
-
-        Render::PostProcessing::render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     } 
-    Render::PostProcessing::terminate();
     Managers::ResourceManager::clear();
     glfwTerminate();
     return 0;
