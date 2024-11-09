@@ -30,6 +30,7 @@ namespace Render
     {
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
     }
 
