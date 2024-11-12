@@ -25,6 +25,18 @@
 			]
 		},
 		{
+		"name": "shadow_point_shader",
+		"vertex_path": "res/Shaders/shadow_point_shader.vs",
+		"fragment_path": "res/Shaders/shadow_point_shader.fs",
+		"geometry_path":"NULL",
+		"uniform_block":[
+			{
+				"name":"Matrices",
+				"index":0
+			}
+			]
+		},
+		{
 		"name": "shadow_depth",
 		"vertex_path": "res/Shaders/shadow_depth.vs",
 		"fragment_path": "res/Shaders/shadow_depth.fs",
