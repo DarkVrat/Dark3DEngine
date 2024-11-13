@@ -10,7 +10,7 @@
 #include "Manager/ResourceManager.h"
 #include "Manager/ConfigManager.h"
 #include "Render/PostProcessing.h"
-#include "Render/ShadowMap.h"
+#include "Render/ShadowPoint.h"
 
 extern "C" {
     _declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
@@ -142,17 +142,25 @@ int main()
     Camera::updatePositionMouse(glm::vec2(windowSize.x / 2, windowSize.y / 2));
 
     std::shared_ptr<ShaderProgram> Shader = Managers::ResourceManager::getShader("shadow_point_shader");
+    std::shared_ptr<ShaderProgram> depthShader = Managers::ResourceManager::getShader("point_shadows_depth");
+
+    glm::vec3 pointPos = glm::vec3(0.f, 0.f, 0.f);
 
     Shader->use();
     Shader->setFloat("material.shininess", 32.f);
 
-    Shader->setVec3("pointLights[0].position", glm::vec3(0.f, 0.f, 0.f));
-    Shader->setVec3("pointLights[0].ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-    Shader->setVec3("pointLights[0].diffuse", glm::vec3(0.9f, 0.9f, 0.9f));
+    Shader->setVec3("pointLights[0].position", pointPos);
+    Shader->setVec3("pointLights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    Shader->setVec3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
     Shader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
     Shader->setFloat("pointLights[0].constant", 1.0f);
     Shader->setFloat("pointLights[0].linear", 0.045f);
     Shader->setFloat("pointLights[0].quadratic", 0.0075f);
+
+    float far_plane = 25.0f;
+
+    Shader->setFloat("far_plane", far_plane);
+    Shader->setInt("shadows", true);
 
     float lastFrame = 0.0f;
 
@@ -161,43 +169,108 @@ int main()
 
     Render::PostProcessing::init();
 
+    Render::ShadowPoint shadowPoint;
+
+    float near_plane = 1.0f;
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, near_plane, far_plane);
+
+    std::vector<glm::mat4> shadowTransforms;
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pointPos, pointPos + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pointPos, pointPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pointPos, pointPos + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pointPos, pointPos + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pointPos, pointPos + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pointPos, pointPos + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)));
+
+    depthShader->use();
+
+    for (unsigned int i = 0; i < 6; ++i) {
+        depthShader->setMatrix4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+    }
+
+    depthShader->setFloat("far_plane", far_plane);
+    depthShader->setVec3("lightPos", pointPos);
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
         float deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-         
-        processInput(window);
 
-        Render::PostProcessing::bind();
+        processInput(window);
 
         Camera::updatePositionCamera(deltaTime);
 
-        Shader->use();
+        shadowPoint.bindDepthMap();
 
-        for (unsigned int i = 0; i < 5; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, contanersPositions[i]);
-            model = glm::rotate(model, contanersRotate[i], glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-            model = glm::scale(model, contanersScale[i]);
-            Shader->setMatrix4("model", model);
-            container->Draw(Shader); 
+        depthShader->use();
+
+        { // Scene
+            for (unsigned int i = 0; i < 5; i++)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, contanersPositions[i]);
+                model = glm::rotate(model, contanersRotate[i], glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+                model = glm::scale(model, contanersScale[i]);
+                depthShader->setMatrix4("model", model);
+                container->Draw(depthShader);
+            }
+
+            for (unsigned int i = 0; i < 3; i++)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::rotate(model, glm::radians(90.f), floorRotate[i]);
+                model = glm::scale(model, glm::vec3(5.f));
+
+                model = glm::translate(model, glm::vec3(-1.f, 0.f, 0.f));
+                depthShader->setMatrix4("model", model);
+                floor->Draw(depthShader);
+
+                model = glm::translate(model, glm::vec3(2.f, 0.f, 0.f));
+                depthShader->setMatrix4("model", model);
+                floor->Draw(depthShader);
+            }
         }
 
-        for (unsigned int i = 0; i < 3; i++)
-        {
+        shadowPoint.unbindFramebuffer();
+
+        Render::PostProcessing::bind();
+
+        Shader->use();
+        shadowPoint.bindShadowMapTexture(15);
+        Shader->setInt("depthMap", 15); 
+        
+        { // Scene
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::rotate(model, glm::radians(90.f), floorRotate[i]);
-            model = glm::scale(model, glm::vec3(5.f));
-
-            model = glm::translate(model, glm::vec3(-1.f, 0.f, 0.f));
+            model = glm::translate(model, pointPos);
+            model = glm::scale(model, glm::vec3(0.03f));
             Shader->setMatrix4("model", model);
-            floor->Draw(Shader);
+            container->Draw(Shader);
 
-            model = glm::translate(model, glm::vec3(2.f, 0.f, 0.f));
-            Shader->setMatrix4("model", model);
-            floor->Draw(Shader);
+            for (unsigned int i = 0; i < 5; i++)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, contanersPositions[i]);
+                model = glm::rotate(model, contanersRotate[i], glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+                model = glm::scale(model, contanersScale[i]);
+                Shader->setMatrix4("model", model);
+                container->Draw(Shader);
+            }
+
+            for (unsigned int i = 0; i < 3; i++)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::rotate(model, glm::radians(90.f), floorRotate[i]);
+                model = glm::scale(model, glm::vec3(5.f));
+
+                model = glm::translate(model, glm::vec3(-1.f, 0.f, 0.f));
+                Shader->setMatrix4("model", model);
+                floor->Draw(Shader);
+
+                model = glm::translate(model, glm::vec3(2.f, 0.f, 0.f));
+                Shader->setMatrix4("model", model);
+                floor->Draw(Shader);
+            }
         }
 
         Render::PostProcessing::render();

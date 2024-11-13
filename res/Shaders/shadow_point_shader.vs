@@ -9,6 +9,7 @@ layout (std140) uniform Matrices
     mat4 projection;
     mat4 view;
 };
+uniform bool reverse_normals;
 
 out vec3 FragPos;  
 out vec3 Normal;
@@ -19,7 +20,10 @@ void main()
 {
     gl_Position = projection * view * model * vec4(aPos, 1.0);
     FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = mat3(transpose(inverse(model))) * aNormal;  
+	
+	mat3 normalMatrix = transpose(inverse(mat3(model)));
+    Normal = reverse_normals ? normalMatrix * (-aNormal) : normalMatrix * aNormal;
+	
 	ViewPos = vec3(inverse(view)[3]);
 	TexCoords = aTexCoords;
 }

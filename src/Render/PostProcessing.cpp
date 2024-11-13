@@ -83,6 +83,8 @@ namespace Render
 
     void PostProcessing::bind()
     {
+        glm::ivec2 windowSize = Managers::ConfigManager::getWindowSize();
+        glViewport(0, 0, windowSize.x, windowSize.y);
         glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.f, 0.f, 0.f, 1.f);

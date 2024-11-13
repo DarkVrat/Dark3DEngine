@@ -44,6 +44,13 @@
 		"uniform_block":[]
 		},
 		{
+		"name": "point_shadows_depth",
+		"vertex_path": "res/Shaders/point_shadows_depth.vs",
+		"fragment_path": "res/Shaders/point_shadows_depth.fs",
+		"geometry_path":"res/Shaders/point_shadows_depth.gs",
+		"uniform_block":[]
+		},
+		{
 		"name": "depth_debug",
 		"vertex_path": "res/Shaders/depth_debug.vs",
 		"fragment_path": "res/Shaders/depth_debug.fs",
