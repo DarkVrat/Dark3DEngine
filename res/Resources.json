@@ -153,7 +153,13 @@
 		"has_mtl": false,
 		"diffuse": "res/Textures/wood-4.png",
 		"specular": "res/Textures/wood-4-5.png"
+		},
+		{
+		"name": "modern-bloc",
+		"obj_path": "res/modern-bloc/modern-bloc.obj",
+		"has_mtl": true
 		}
+		
 	],
 	"skyboxes":[
 		{

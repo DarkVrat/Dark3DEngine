@@ -166,6 +166,7 @@ int main()
 
     std::shared_ptr<Model> container = Managers::ResourceManager::getModel("container");
     std::shared_ptr<Model> floor = Managers::ResourceManager::getModel("floor");
+    std::shared_ptr<Model> modern = Managers::ResourceManager::getModel("modern-bloc");
 
     Render::PostProcessing::init();
 
@@ -231,9 +232,9 @@ int main()
                 floor->Draw(depthShader);
             }
         }
-
+         
         shadowPoint.unbindFramebuffer();
-
+        
         Render::PostProcessing::bind();
 
         Shader->use();
@@ -254,7 +255,7 @@ int main()
                 model = glm::rotate(model, contanersRotate[i], glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
                 model = glm::scale(model, contanersScale[i]);
                 Shader->setMatrix4("model", model);
-                container->Draw(Shader);
+                modern->Draw(Shader);
             }
 
             for (unsigned int i = 0; i < 3; i++)

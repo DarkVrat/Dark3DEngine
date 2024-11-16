@@ -86,7 +86,7 @@ namespace Managers
         auto shader = m_shaders.find(name);
         if (shader == m_shaders.end())
             return nullptr;
-        return shader->second;
+        return shader->second; 
     }
 
     void ResourceManager::loadModel(const rapidjson::GenericValue<rapidjson::UTF8<>>& model)
@@ -107,6 +107,9 @@ namespace Managers
 
             if (model.HasMember("normal"))
                 model_ptr->getSTexture().normal = TextureLoader::loadTexture(getFullPath(model["normal"].GetString()));
+
+            if (model.HasMember("height"))
+                model_ptr->getSTexture().height = TextureLoader::loadTexture(getFullPath(model["height"].GetString()));
         }
     }
 

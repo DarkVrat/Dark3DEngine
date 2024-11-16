@@ -12,6 +12,7 @@ namespace Render
         std::shared_ptr<Texture2D> diffuse = nullptr;
         std::shared_ptr<Texture2D> specular = nullptr;
         std::shared_ptr<Texture2D> normal = nullptr;
+        std::shared_ptr<Texture2D> height = nullptr;
     };
 
 	class Model
