@@ -204,11 +204,11 @@ int main()
 
         shadowPoint.bindDepthMap();
 
-        depthShader->use();
+        depthShader->use(); 
 
         { // Scene
             for (unsigned int i = 0; i < 5; i++)
-            {
+            { 
                 glm::mat4 model = glm::mat4(1.0f);
                 model = glm::translate(model, contanersPositions[i]);
                 model = glm::rotate(model, contanersRotate[i]*currentFrame/3, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
