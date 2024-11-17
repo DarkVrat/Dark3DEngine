@@ -16,6 +16,8 @@ namespace Render
         m_VAO.addBuffer(m_VBO, 0, 3, sizeof(Vertex));
         m_VAO.addBuffer(m_VBO, 1, 3, sizeof(Vertex), 3);
         m_VAO.addBuffer(m_VBO, 2, 2, sizeof(Vertex), 6);
+        m_VAO.addBuffer(m_VBO, 3, 3, sizeof(Vertex), 8);
+        m_VAO.addBuffer(m_VBO, 4, 3, sizeof(Vertex), 11);
 		m_VAO.unbind();
 	}
 
@@ -38,7 +40,7 @@ namespace Render
                 number = std::to_string(normalNr++);
             else if (name == "texture_height")
                 number = std::to_string(heightNr++);
-
+             
             shader->setInt(("material." + name + number).c_str(), i);
             m_textures[i].texture->bind();
         }

@@ -44,6 +44,13 @@ namespace Render
 				m_textures.normal->bind();
 			}
 
+			if (m_textures.height != nullptr)
+			{
+				glActiveTexture(GL_TEXTURE3);
+				shader->setInt("material.texture_height1", 3);
+				m_textures.height->bind();
+			}
+
 			shader->setFloat("material.shininess", 128.f);
 		}
 
@@ -142,6 +149,13 @@ namespace Render
 			vertex.Normal.x = mesh->mNormals[i].x;
 			vertex.Normal.y = mesh->mNormals[i].y;
 			vertex.Normal.z = mesh->mNormals[i].z;
+			vertex.Tangent.x = mesh->mTangents[i].x;
+			vertex.Tangent.y = mesh->mTangents[i].y;
+			vertex.Tangent.z = mesh->mTangents[i].z;
+			vertex.BiTangent.x = mesh->mBitangents[i].x;
+			vertex.BiTangent.y = mesh->mBitangents[i].y;
+			vertex.BiTangent.z = mesh->mBitangents[i].z;
+
 
 			if (mesh->mTextureCoords[0])
 			{

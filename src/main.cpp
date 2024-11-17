@@ -211,7 +211,7 @@ int main()
             {
                 glm::mat4 model = glm::mat4(1.0f);
                 model = glm::translate(model, contanersPositions[i]);
-                model = glm::rotate(model, contanersRotate[i], glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+                model = glm::rotate(model, contanersRotate[i]*currentFrame/3, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
                 model = glm::scale(model, contanersScale[i]);
                 depthShader->setMatrix4("model", model);
                 container->Draw(depthShader);
@@ -252,18 +252,18 @@ int main()
             {
                 glm::mat4 model = glm::mat4(1.0f);
                 model = glm::translate(model, contanersPositions[i]);
-                model = glm::rotate(model, contanersRotate[i], glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+                model = glm::rotate(model, contanersRotate[i] * currentFrame/3, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
                 model = glm::scale(model, contanersScale[i]);
                 Shader->setMatrix4("model", model);
                 modern->Draw(Shader);
             }
-
+             
             for (unsigned int i = 0; i < 3; i++)
             {
                 glm::mat4 model = glm::mat4(1.0f);
                 model = glm::rotate(model, glm::radians(90.f), floorRotate[i]);
                 model = glm::scale(model, glm::vec3(5.f));
-
+                 
                 model = glm::translate(model, glm::vec3(-1.f, 0.f, 0.f));
                 Shader->setMatrix4("model", model);
                 floor->Draw(Shader);

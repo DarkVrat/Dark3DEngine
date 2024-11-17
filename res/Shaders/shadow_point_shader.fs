@@ -1,14 +1,16 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec3 Normal;  
 in vec3 FragPos;  
 in vec3 ViewPos;
 in vec2 TexCoords;
+in mat3 TBN;
 
 struct Material {
 	sampler2D texture_diffuse1;
 	sampler2D texture_specular1;
+	sampler2D texture_normal1;
+	sampler2D texture_height1;
     float     shininess;
 }; 
 uniform Material material;
@@ -65,10 +67,13 @@ float ShadowCalculation(vec3 fragPos)
 
 void main()
 {   
-    vec3 norm = normalize(Normal);
+    vec3 normal = texture(material.texture_normal1, TexCoords).rgb;
+	normal = normal * 2.0 - 1.0;   
+	normal = normalize(TBN * normal); 
+	
     vec3 viewDir = normalize(ViewPos - FragPos);
 
-    vec3 result = CalcPointLight(pointLights[0], norm, FragPos, viewDir);    
+    vec3 result = CalcPointLight(pointLights[0], normal, FragPos, viewDir);    
     
     gl_FragColor = vec4(result, texture(material.texture_diffuse1, TexCoords).a);
 }
