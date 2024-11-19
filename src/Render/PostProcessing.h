@@ -18,6 +18,7 @@ namespace Render
 		static void setFilter(const glm::mat3& filter);
 		static void setTexelSize(const float& texelSize);
 		static void setGamma(const float& gamma);
+		static void setExposure(const float& exposure);
 	private:
 		static VertexBuffer m_VBO;
 		static std::unique_ptr<VertexArray> m_VAO;
@@ -32,5 +33,6 @@ namespace Render
 		static glm::mat3 m_filter;
 		static float m_texelSize;
 		static float m_gamma;
+		static float m_exposure;
 	};
 }

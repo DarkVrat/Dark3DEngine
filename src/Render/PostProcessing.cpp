@@ -18,6 +18,7 @@ glm::mat3 Render::PostProcessing::m_kernel = glm::mat3(0,0,0,0,1,0,0,0,0);
 glm::mat3 Render::PostProcessing::m_filter = glm::mat3(1);
 float Render::PostProcessing::m_texelSize = 1.f / 1000.f;
 float Render::PostProcessing::m_gamma = 0.675f;
+float Render::PostProcessing::m_exposure = 2.0f;
 
 namespace Render
 {
@@ -45,7 +46,7 @@ namespace Render
 
         glGenTextures(1, &m_textureColorBufferMultiSampled);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_textureColorBufferMultiSampled);
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, Managers::ConfigManager::getSamples(), GL_RGB, windowSize.x, windowSize.y, GL_TRUE);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, Managers::ConfigManager::getSamples(), GL_RGBA16F, windowSize.x, windowSize.y, GL_TRUE);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_textureColorBufferMultiSampled, 0);
 
@@ -79,7 +80,8 @@ namespace Render
         m_shader->setMatrix3("filter", m_filter);
         m_shader->setFloat("texelSize", m_texelSize);
         m_shader->setFloat("gamma", m_gamma);
-	}
+        m_shader->setFloat("exposure", m_exposure);
+    }
 
     void PostProcessing::bind()
     {
@@ -153,6 +155,15 @@ namespace Render
         {
             m_shader->use();
             m_shader->setFloat("gamma", m_gamma);
+        }
+    }
+    void PostProcessing::setExposure(const float& exposure)
+    {
+        m_exposure = exposure;
+        if (m_shader != nullptr)
+        {
+            m_shader->use();
+            m_shader->setFloat("exposure", m_exposure);
         }
     }
 }

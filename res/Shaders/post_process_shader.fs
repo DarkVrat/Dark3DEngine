@@ -8,6 +8,7 @@ uniform mat3 kernel;
 uniform mat3 filter;
 uniform float texelSize;
 uniform float gamma;
+uniform float exposure;
 
 void main()
 {
@@ -21,5 +22,8 @@ void main()
     
 	col = filter * col;
 	
-    FragColor = vec4(pow(col, vec3(1.0/gamma)), 1.0);
+	vec3 mapped = vec3(1.0) - exp(-col * exposure);
+	mapped = pow(mapped, vec3(1.0 / gamma));
+	
+    FragColor = vec4(mapped, 1.0);
 }  

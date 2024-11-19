@@ -123,9 +123,9 @@ int main()
 
     float contanersRotate[] = {
         0.f,
+        0.f, 
         0.f,
-        0.f,
-        0.f,
+        0.f, 
         glm::radians(60.0f)
     };
 
@@ -151,7 +151,7 @@ int main()
 
     Shader->setVec3("pointLights[0].position", pointPos);
     Shader->setVec3("pointLights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-    Shader->setVec3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+    Shader->setVec3("pointLights[0].diffuse", glm::vec3(1.0f)); 
     Shader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
     Shader->setFloat("pointLights[0].constant", 1.0f);
     Shader->setFloat("pointLights[0].linear", 0.045f);
