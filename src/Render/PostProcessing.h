@@ -19,6 +19,8 @@ namespace Render
 		static void setTexelSize(const float& texelSize);
 		static void setGamma(const float& gamma);
 		static void setExposure(const float& exposure);
+		static void setAmountBloom(const int& amountBloom);
+		static void setIntensity(const float& intensity);
 	private:
 		static VertexBuffer m_VBO;
 		static std::unique_ptr<VertexArray> m_VAO;
@@ -28,6 +30,13 @@ namespace Render
 		static GLuint m_rbo;
 		static GLuint m_intermediateFBO;
 		static GLuint m_screenTexture;
+
+		static GLuint m_pingpongFBO[2];
+		static GLuint m_pingpongColorbuffers[2];
+		static std::shared_ptr<ShaderProgram> m_bloomExtractShader;
+		static std::shared_ptr<ShaderProgram> m_bloomBlurShader;
+		static int m_amountBloom;
+		static float m_intensity;
 
 		static glm::mat3 m_kernel;
 		static glm::mat3 m_filter;

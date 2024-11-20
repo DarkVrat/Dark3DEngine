@@ -65,6 +65,20 @@
 		"uniform_block":[]
 		},
 		{
+		"name": "bloom_extract_shader",
+		"vertex_path": "res/Shaders/bloom_extract_shader.vs",
+		"fragment_path": "res/Shaders/bloom_extract_shader.fs",
+		"geometry_path":"NULL",
+		"uniform_block":[]
+		},
+		{
+		"name": "bloom_blur_shader",
+		"vertex_path": "res/Shaders/bloom_blur_shader.vs",
+		"fragment_path": "res/Shaders/bloom_blur_shader.fs",
+		"geometry_path":"NULL",
+		"uniform_block":[]
+		},
+		{
 		"name": "skybox_shader",
 		"vertex_path": "res/Shaders/skybox_shader.vs",
 		"fragment_path": "res/Shaders/skybox_shader.fs",

@@ -109,7 +109,7 @@ int main()
         glm::vec3(4.f, -3.5f, 0.f),
         glm::vec3(2.f, 3.f, 1.f),
         glm::vec3(-3.f, -1.f, 0.f),
-        glm::vec3(-1.5f, 1.f, 1.5f),
+        glm::vec3(-0.5f, 1.f, 0.5f),
         glm::vec3(-1.5f, 2.f, -3.f)
     };
 
@@ -151,11 +151,11 @@ int main()
 
     Shader->setVec3("pointLights[0].position", pointPos);
     Shader->setVec3("pointLights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-    Shader->setVec3("pointLights[0].diffuse", glm::vec3(1.0f)); 
+    Shader->setVec3("pointLights[0].diffuse", glm::vec3(10.0f));
     Shader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
     Shader->setFloat("pointLights[0].constant", 1.0f);
-    Shader->setFloat("pointLights[0].linear", 0.045f);
-    Shader->setFloat("pointLights[0].quadratic", 0.0075f);
+    Shader->setFloat("pointLights[0].linear", 0.22f);
+    Shader->setFloat("pointLights[0].quadratic", 0.2f);
 
     float far_plane = 25.0f;
 

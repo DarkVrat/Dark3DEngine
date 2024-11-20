@@ -4,6 +4,8 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D screenTexture;
+uniform sampler2D bloomBlur;
+
 uniform mat3 kernel;
 uniform mat3 filter;
 uniform float texelSize;
@@ -22,8 +24,13 @@ void main()
     
 	col = filter * col;
 	
-	vec3 mapped = vec3(1.0) - exp(-col * exposure);
-	mapped = pow(mapped, vec3(1.0 / gamma));
-	
-    FragColor = vec4(mapped, 1.0);
+	vec3 hdrColor = vec3(1.0) - exp(-col * exposure);
+    hdrColor = pow(hdrColor, vec3(1.0 / gamma));
+
+    vec3 bloomColor = texture(bloomBlur, TexCoords).rgb;
+
+    vec3 finalColor = hdrColor + bloomColor;
+    finalColor = clamp(finalColor, 0.0, 1.0);
+
+    FragColor = vec4(finalColor, 1.0);
 }  
