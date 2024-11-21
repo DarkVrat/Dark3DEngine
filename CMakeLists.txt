@@ -15,6 +15,7 @@ set(RENDER_SOURCE
 	src/Render/SkyboxRender.cpp
 	src/Render/ShadowMap.cpp
 	src/Render/ShadowPoint.cpp
+	src/Render/DeferredShading.cpp
 )
 
 set(RENDER_HEADERS 
@@ -29,6 +30,7 @@ set(RENDER_HEADERS
 	src/Render/SkyboxRender.h
 	src/Render/ShadowMap.h
 	src/Render/ShadowPoint.h
+	src/Render/DeferredShading.h
 	src/Render/stb_image.h
 )
 

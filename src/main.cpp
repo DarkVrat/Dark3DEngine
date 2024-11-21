@@ -14,6 +14,8 @@
 #include "Render/PostProcessing.h"
 #include "Render/ShadowPoint.h"
 
+#include "Render/DeferredShading.h"
+
 extern "C" {
     _declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
     _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
@@ -149,8 +151,8 @@ int main()
     srand(static_cast<unsigned>(time(0)));
 
     auto cubePositions = generateCubePositions();
-    auto lightPositions = generateLightPositions(200);
-    auto lightColors = generateLightColors(200);
+    auto lightPositions = generateLightPositions(100);
+    auto lightColors = generateLightColors(100);
 
     Managers::ResourceManager::loadResources("res/Resources.json");
 
@@ -158,31 +160,25 @@ int main()
     Camera::setScreenSize(glm::vec2(windowSize.x, windowSize.y));
     Camera::updatePositionMouse(glm::vec2(windowSize.x / 2, windowSize.y / 2));
 
-    std::shared_ptr<ShaderProgram> Shader = Managers::ResourceManager::getShader("before_DF");
 
-    Shader->use();
-    Shader->setFloat("material.shininess", 32.f);
-
+    std::shared_ptr<ShaderProgram> light_for_DF = Managers::ResourceManager::getShader("light_for_DF");
+    light_for_DF->use();
     for (size_t i = 0; i < lightPositions.size(); ++i) {
-        std::string base = "pointLights[" + std::to_string(i) + "].";
-        Shader->setVec3(base + "position", lightPositions[i]);
-        Shader->setVec3(base + "ambient", glm::vec3(0.f));
-        Shader->setVec3(base + "diffuse", lightColors[i]);
-        Shader->setVec3(base + "specular", glm::vec3(1.f));
-        Shader->setFloat(base + "constant", 1.0f);
-        Shader->setFloat(base + "linear", 0.7f);
-        Shader->setFloat(base + "quadratic", 1.8f);
+        std::string base = "lights[" + std::to_string(i) + "].";
+        light_for_DF->setVec3(base + "Position", lightPositions[i]);
+        light_for_DF->setVec3(base + "Color", lightColors[i]);
+        light_for_DF->setFloat(base + "Linear", 0.7f);
+        light_for_DF->setFloat(base + "Quadratic", 1.8f);
+        light_for_DF->setFloat(base + "Radius", 7.f);
     }
-
 
     float lastFrame = 0.0f;
 
-    std::shared_ptr<Model> container = Managers::ResourceManager::getModel("container");
+    std::shared_ptr<Model> container = Managers::ResourceManager::getModel("modern-bloc");
 
     Render::PostProcessing::init();
-    
-    int fps = 0;
-    float seconds = 0.f;
+    Render::DeferredShading::init();
+    std::shared_ptr<ShaderProgram> scene_for_DF = Managers::ResourceManager::getShader("scene_for_DF");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -190,37 +186,31 @@ int main()
         float deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // +- 200 fps without Deferred Shading
-        seconds += deltaTime;
-        fps++;
-        if (seconds > 1.f) 
-        {
-            seconds -= 1.f;
-            std::cout << fps << std::endl;
-            fps = 0;
-        }
-
         processInput(window);
-
-        Render::PostProcessing::bind();
 
         Camera::updatePositionCamera(deltaTime);
 
-        Shader->use();
+        Render::DeferredShading::bind();
 
+        scene_for_DF->use();
         for (const auto& pos : cubePositions) {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, pos);
             model = glm::scale(model, glm::vec3(0.75f));
-            Shader->setMatrix4("model", model);
-            container->Draw(Shader);
+            scene_for_DF->setMatrix4("model", model);
+            container->Draw(scene_for_DF);
         }
+
+        Render::PostProcessing::bind();
+
+        Render::DeferredShading::Render();
 
         Render::PostProcessing::render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    Render::DeferredShading::terminate();
     Render::PostProcessing::terminate();
     Managers::ResourceManager::clear();
     glfwTerminate();

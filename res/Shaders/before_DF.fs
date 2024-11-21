@@ -1,61 +1,106 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec3 Normal;  
-in vec3 FragPos;  
-in vec3 ViewPos;
 in vec2 TexCoords;
+in vec3 FragPos;
+in mat3 TBN;
+in vec3 ViewPos;
 
 struct Material {
-	sampler2D texture_diffuse1;
-	sampler2D texture_specular1;
-    float     shininess;
+    sampler2D texture_diffuse1;
+    sampler2D texture_specular1;
+    sampler2D texture_normal1;
+    sampler2D texture_height1;
+    float shininess;
 }; 
+
 uniform Material material;
 
-struct PointLight {    
-    vec3 position;
+struct Light {
+    vec3 Position;
+    vec3 Color;
+    float Linear;
+    float Quadratic;
+    float Radius;
+};
+
+const int NR_LIGHTS = 100;
+uniform Light lights[NR_LIGHTS];
+
+// Функция для параллакса
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float heightScale = 0.01;
+    const float minLayers = 8;
+    const float maxLayers = 32;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
+    float layerDepth = 1.0 / numLayers;
+    float currentLayerDepth = 0.0;
+    vec2 P = viewDir.xy / viewDir.z * heightScale; 
+    vec2 deltaTexCoords = P / numLayers;
+  
+    vec2 currentTexCoords = texCoords;
+    float currentDepthMapValue = texture(material.texture_height1, currentTexCoords).r;
     
-    float constant;
-    float linear;
-    float quadratic;  
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};  
-#define NR_POINT_LIGHTS 100
-uniform PointLight pointLights[NR_POINT_LIGHTS];
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-
-void main()
-{   
-    vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(ViewPos - FragPos);
-
-    vec3 result = vec3(0.0);
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);      
+    while(currentLayerDepth < currentDepthMapValue)
+    {
+        currentTexCoords -= deltaTexCoords;
+        currentDepthMapValue = texture(material.texture_height1, currentTexCoords).r;  
+        currentLayerDepth += layerDepth;  
+    }
     
-    gl_FragColor = vec4(result, texture(material.texture_diffuse1, TexCoords).a);
+    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+    float afterDepth  = currentDepthMapValue - currentLayerDepth;
+    float beforeDepth = texture(material.texture_height1, prevTexCoords).r - currentLayerDepth + layerDepth;
+ 
+    float weight = afterDepth / (afterDepth - beforeDepth);
+    vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+
+    return finalTexCoords;  
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+void main()
 {
-    vec3 lightDir = normalize(light.position - fragPos);
-    float diff = max(dot(normal, lightDir), 0.0);
-    vec3 halfwayDir  = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess*4);
+    // Вычисление viewDir в системе координат TBN
+    mat3 tTBN = transpose(TBN);
+    vec3 viewDir = normalize(tTBN * (ViewPos - FragPos));
 
-    float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    // Применение Parallax Mapping для корректировки координат текстуры
+    vec2 correctedTexCoords = ParallaxMapping(TexCoords, viewDir);
 
-    vec3 ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, TexCoords));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, TexCoords));
-    ambient  *= attenuation;
-    diffuse  *= attenuation;
-    specular *= attenuation;
-	
-    return (ambient + diffuse + specular);
-} 
+    // Получение данных о текстурах с учётом скорректированных координат
+    vec3 albedo = texture(material.texture_diffuse1, correctedTexCoords).rgb;
+    float specular = texture(material.texture_specular1, correctedTexCoords).r;
+    vec3 normal = texture(material.texture_normal1, correctedTexCoords).rgb;
+    normal = normalize(TBN * (normal * 2.0 - 1.0));
+
+    // Базовое освещение
+    vec3 lighting = albedo * 0.1;
+
+    // Позиция камеры
+    vec3 viewDirWorld = normalize(ViewPos - FragPos);
+
+    // Цикл освещения
+    for(int i = 0; i < NR_LIGHTS; ++i)
+    {
+        float distance = length(lights[i].Position - FragPos);
+        if(distance < lights[i].Radius)
+        {
+            vec3 lightDir = normalize(lights[i].Position - FragPos);
+            vec3 diffuse = max(dot(normal, lightDir), 0.0) * albedo * lights[i].Color;
+            vec3 halfwayDir = normalize(lightDir + viewDirWorld);  
+            float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+            vec3 specularLight = lights[i].Color * spec * specular;
+
+            // Аттенюация (затухание света)
+            float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
+            diffuse *= attenuation;
+            specularLight *= attenuation;
+            
+            lighting += diffuse + specularLight;
+        }
+    }
+
+    // Финальный цвет фрагмента
+    FragColor = vec4(lighting, 1.0);
+}

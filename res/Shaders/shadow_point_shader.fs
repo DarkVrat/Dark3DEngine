@@ -86,7 +86,6 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
     }
     
     vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
-
     float afterDepth  = currentDepthMapValue - currentLayerDepth;
     float beforeDepth = texture(material.texture_height1, prevTexCoords).r - currentLayerDepth + layerDepth;
  
@@ -99,7 +98,7 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 void main()
 {   
 	mat3 tTBN = transpose(TBN);
-	vec3 viewDir = normalize(tTBN * ViewPos - tTBN * FragPos);
+    vec3 viewDir = normalize(tTBN * (ViewPos - FragPos));
 	vec2 texCoords = ParallaxMapping(TexCoords,  viewDir);
 	viewDir = normalize(ViewPos - FragPos);
 	
